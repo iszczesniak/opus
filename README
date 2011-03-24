@@ -9,20 +9,22 @@ outgoing fibers at a node can be any.  The number of wavelength and
 length of those fibers can be any too.  The topology of the network
 can also be any.
 
-OPUS was developed on Ubuntu Linux.  It builds and works there.
-Please report any issues that you might have.
+I work on OPUS on Debian.  It builds and works there.  Please report
+any issues that you might have.
 
 INSTALLATION
 ------------
 
-You need the GNU Scientific Library.  I installed it from packages.
+You need the development files for the GNU Scientific Library.  I
+installed it from packages.
 
 You need to have the Boost libraries.  I installed them from packages.
-You need also the binary and development libraries of:
+You need also the development libraries of:
 
 - boost regex
 - boost program options
 - boost graph
+- boost serialization
 
 Once you installed the Boost libaries and the GNU Scientific Library,
 you can build OPUS: just type "make".  You might need to edit the
@@ -35,5 +37,5 @@ Bash with:
 
 export LD_LIBRARY_PATH=/usr/local/lib
 
-OPTIONAL: When you builded OPUS, you can run a number of unit tests.
+OPTIONAL: After you build OPUS, you can run a number of unit tests.
 Go to the test directory and type "make".
