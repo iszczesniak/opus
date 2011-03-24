@@ -1,0 +1,70 @@
+#!/bin/bash
+
+if [ $# != 2 ]; then
+    echo "$0: use me this way:"
+    echo "$0 -A <.run file name>"
+    echo "$0 -S <.run file name>"
+    echo
+    echo "Your .run file should look like this:"
+    echo "[network=<Graphviz file name>]"
+    echo "[traffic=<traffic file name>]"
+    echo "[output=<output file name>]"
+    echo "HL=<integer>"
+    echo "DL=<integer>"
+    exit 1;
+fi
+
+if [ $1 != "-A" -a $1 != "-S" ]; then
+    echo "The first argument must be either -A or -S.";
+    exit 1;
+fi
+
+if [ ! -r $2 ]; then
+    echo "Can't read file $2.";
+    exit 1;
+fi
+
+source $2;
+
+run_fn=$2
+run_dr=`dirname $run_fn`
+run_bn=`basename $run_fn .run`
+
+# File name with no extension.
+fnne=${run_dr}/${run_bn}
+
+if [ -z "$network" ]; then
+    network=${fnne}.dot
+fi
+
+if [ -z "$traffic" ]; then
+    traffic=${fnne}.tm
+fi
+
+if [ -z "$output" ]; then
+    if [ $1 == "-A" ]; then
+        output=${fnne}.A
+    fi
+
+    if [ $1 == "-S" ]; then
+        output=${fnne}.S
+    fi
+fi
+
+if [ -z "$DL" ]; then
+    echo "Your file $2 should define the distance limit like this:"
+    echo "DL=<integer>"
+    exit 1
+fi
+
+if [ -z "$HL" ]; then
+    echo "Your file $2 should define the hop limit like this:"
+    echo "HL=<integer>"
+    exit 1
+fi
+
+cmd="../opus $1 -t $network -m $traffic -o $output --HL $HL --DL $DL"
+
+echo Running: $cmd
+
+exec $cmd;

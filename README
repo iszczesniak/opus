@@ -1,0 +1,39 @@
+Author: Irek Szczesniak <irek.szczesniak@gmail.com>
+License: GPL
+Copyright: IITiS PAN, Gliwice, Poland (2003 - 2009)
+Copyright: Politechnika Czestochowska, Czestochowa, Poland (2011)
+
+The Optical Packet Universal Solver solves (OPUS) by simulation or
+analysis optical packet-switched networks.  The number of incoming and
+outgoing fibers at a node can be any.  The number of wavelength and
+length of those fibers can be any too.  The topology of the network
+can also be any.
+
+OPUS was developed on Ubuntu Linux.  It builds and works there.
+Please report any issues that you might have.
+
+INSTALLATION
+------------
+
+You need the GNU Scientific Library.  I installed it from packages.
+
+You need to have the Boost libraries.  I installed them from packages.
+You need also the binary and development libraries of:
+
+- boost regex
+- boost program options
+- boost graph
+
+Once you installed the Boost libaries and the GNU Scientific Library,
+you can build OPUS: just type "make".  You might need to edit the
+Makefile to point to the location of needed libraries.
+
+When you builded OPUS, go to the runs subdirectory and type "make"
+again.  This should run the simulation and analysis.  If the dynamic
+libraries are installed in some specific directory, point it out in
+Bash with:
+
+export LD_LIBRARY_PATH=/usr/local/lib
+
+OPTIONAL: When you builded OPUS, you can run a number of unit tests.
+Go to the test directory and type "make".
