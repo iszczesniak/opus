@@ -360,7 +360,7 @@ main()
   minstd_rand gen;
 
   for_a_sc(gen, arra_condition(1000));
-  for_a_sc(gen, prob_condition(0.5));
+  for_a_sc(gen, prob_condition(0.9));
   for_a_sc(gen, rati_condition(1e-2));
   for_a_sc(gen, size_condition(1000));
   for_a_sc(gen, time_condition(1e-2));
