@@ -69,7 +69,7 @@ class ratio_condition : public condition
   double ratio;
 
 public:
-  ratio_condition(double t) : ratio(t) {}
+  ratio_condition(double ratio) : ratio(ratio) {}
 
   double get_ratio() const
   {
@@ -79,7 +79,7 @@ public:
   string to_string() const
   {
     ostringstream out;
-    out << "ratio for " << ratio;
+    out << "ratio of " << ratio;
     return out.str();
   }
 };
@@ -124,6 +124,10 @@ public:
   }
 };
 
+/**
+ * This is a problem, because the queue size might not reach that
+ * limit, and the code just doesn't stop.
+ */
 class size_condition: public condition
 {
   int size;
@@ -215,11 +219,11 @@ for_a_test(const vector<distro> &distros, const condition &sc)
 
   const prob_condition *pcp = dynamic_cast<const prob_condition *>(&sc);
   const size_condition *scp = dynamic_cast<const size_condition *>(&sc);
-  const ratio_condition *tcp = dynamic_cast<const ratio_condition *>(&sc);
-  const time_condition *icp = dynamic_cast<const time_condition *>(&sc);
+  const ratio_condition *rcp = dynamic_cast<const ratio_condition *>(&sc);
+  const time_condition *tcp = dynamic_cast<const time_condition *>(&sc);
 
-  if (tcp)
-    q.set_ratio(tcp->get_ratio());
+  if (rcp)
+    q.set_ratio(rcp->get_ratio());
   else
     // This should be small enough, so that the queue doesn't stop on
     // the ratio condition.
@@ -239,10 +243,10 @@ for_a_test(const vector<distro> &distros, const condition &sc)
       if (pcp && get<0>(tr) > pcp->get_prob())
 	break;	
 
-      if (icp && t.elapsed() > icp->get_time())
+      if (scp && q.get_size() > scp->get_size())
 	break;
 
-      if (scp && q.get_size() > scp->get_size())
+      if (tcp && t.elapsed() > tcp->get_time())
 	break;
     }
 
@@ -296,7 +300,7 @@ for_a_sample(int R, const randis &d, const condition &sc)
 void
 for_a_distro(const randis &d, const condition &sc)
 {
-  cout << "For a random distro: " << d.to_string() << endl;
+  cout << "# For a random distro: " << d.to_string() << endl;
 
   for (int R = 1; R <= 10; ++R)
     {
@@ -307,6 +311,8 @@ for_a_distro(const randis &d, const condition &sc)
 	   << sr.time.first << " " << sr.time.second << " "
 	   << sr.size.first << " " << sr.size.second << endl;
     }
+
+  cout << endl << endl;
 }
 
 /**
@@ -316,10 +322,10 @@ template<typename T>
 void
 for_a_sc(T &gen, const condition &sc)
 {
-  cout << "For a stop condition : " << sc.to_string() << endl;
+  cout << "# For a stop condition : " << sc.to_string() << endl;
 
-  for_a_distro(random_poisson<T>(gen, 0.1, 1), sc);
-  for_a_distro(random_geometric<T>(gen, 0.25, 0.75), sc);
+  for_a_distro(random_poisson<T>(gen, 0, 1), sc);
+  for_a_distro(random_geometric<T>(gen, 0.5, 1), sc);
 }
 
 int
@@ -327,21 +333,17 @@ main()
 {
   minstd_rand gen;
 
-  for_a_sc(gen, size_condition(1000));
-  for_a_sc(gen, size_condition(10000));
-  for_a_sc(gen, size_condition(100000));
-
+  for_a_sc(gen, time_condition(1e-3));
   for_a_sc(gen, time_condition(1e-2));
   for_a_sc(gen, time_condition(1e-1));
-  for_a_sc(gen, time_condition(1));
-
-  for_a_sc(gen, prob_condition(0.1));
-  for_a_sc(gen, prob_condition(0.5));
-  for_a_sc(gen, prob_condition(0.9));
 
   for_a_sc(gen, ratio_condition(1e-1));
   for_a_sc(gen, ratio_condition(1e-2));
   for_a_sc(gen, ratio_condition(1e-3));
+
+  for_a_sc(gen, prob_condition(0.1));
+  for_a_sc(gen, prob_condition(0.5));
+  for_a_sc(gen, prob_condition(0.9));
 
   return 0;
 }
