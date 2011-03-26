@@ -26,12 +26,15 @@ arr_queue::find_next(vector<int> &arr, double &prob)
   pop(arr);
   prob = calc_arr_prob(arr);
 
-  // Return no more arrangements, when this one is already below the
-  // cut off ratio.
-  double curr_ratio = prob / max_prob;
+  // If need be, return no more arrangements, when this one is already
+  // below the cut off ratio.
+  if (ratio != 0)
+    {
+      double curr_ratio = prob / max_prob;
 
-  if (ratio > curr_ratio)
-    return false;
+      if (ratio > curr_ratio)
+	return false;
+    }
 
   for(int i = 0; i < arr.size(); ++i)
     {
