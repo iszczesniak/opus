@@ -64,6 +64,29 @@ public:
   virtual string to_string() const = 0;
 };
 
+/**
+ * Gives the limit on the number of considered arrangements.
+ */
+class arra_condition : public condition
+{
+  int number;
+
+public:
+  arra_condition(int number) : number(number) {}
+
+  double get_number() const
+  {
+    return number;
+  }
+
+  string to_string() const
+  {
+    ostringstream out;
+    out << "number of arrangements of " << number;
+    return out.str();
+  }
+};
+
 class rati_condition : public condition
 {
   double ratio;
@@ -217,6 +240,7 @@ for_a_test(const vector<distro> &distros, const condition &sc)
 
   arr_queue q(distros);
 
+  const arra_condition *acp = dynamic_cast<const arra_condition *>(&sc);
   const prob_condition *pcp = dynamic_cast<const prob_condition *>(&sc);
   const rati_condition *rcp = dynamic_cast<const rati_condition *>(&sc);
   const size_condition *scp = dynamic_cast<const size_condition *>(&sc);
@@ -238,6 +262,9 @@ for_a_test(const vector<distro> &distros, const condition &sc)
       get<0>(tr) += prob;
       ++get<1>(tr);
       get<2>(tr);
+
+      if (acp && get<1>(tr) > acp->get_number())
+	break;	
 
       if (pcp && get<0>(tr) > pcp->get_prob())
 	break;	
@@ -332,13 +359,11 @@ main()
 {
   minstd_rand gen;
 
-  for_a_sc(gen, size_condition(1000));
-
-  for_a_sc(gen, time_condition(1e-2));
-
-  for_a_sc(gen, rati_condition(1e-2));
-
+  for_a_sc(gen, arra_condition(1000));
   for_a_sc(gen, prob_condition(0.5));
+  for_a_sc(gen, rati_condition(1e-2));
+  for_a_sc(gen, size_condition(1000));
+  for_a_sc(gen, time_condition(1e-2));
 
   return 0;
 }
