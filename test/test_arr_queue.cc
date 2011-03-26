@@ -64,12 +64,12 @@ public:
   virtual string to_string() const = 0;
 };
 
-class ratio_condition : public condition
+class rati_condition : public condition
 {
   double ratio;
 
 public:
-  ratio_condition(double ratio) : ratio(ratio) {}
+  rati_condition(double ratio) : ratio(ratio) {}
 
   double get_ratio() const
   {
@@ -218,16 +218,15 @@ for_a_test(const vector<distro> &distros, const condition &sc)
   arr_queue q(distros);
 
   const prob_condition *pcp = dynamic_cast<const prob_condition *>(&sc);
+  const rati_condition *rcp = dynamic_cast<const rati_condition *>(&sc);
   const size_condition *scp = dynamic_cast<const size_condition *>(&sc);
-  const ratio_condition *rcp = dynamic_cast<const ratio_condition *>(&sc);
   const time_condition *tcp = dynamic_cast<const time_condition *>(&sc);
 
   if (rcp)
     q.set_ratio(rcp->get_ratio());
   else
-    // This should be small enough, so that the queue doesn't stop on
-    // the ratio condition.
-    q.set_ratio(1e-100);
+    // Disable the ratio condition.
+    q.set_ratio(0);
 
   vector<int> arr;
   double prob;
@@ -259,13 +258,13 @@ for_a_test(const vector<distro> &distros, const condition &sc)
 sample_results
 for_a_sample(int R, const randis &d, const condition &sc)
 {
-  accumulator_set<double, stats<tag::mean, tag::error_of<tag::mean(lazy)> > >
+  accumulator_set<double, stats<tag::mean, tag::error_of<tag::mean> > >
     acc_prob;
-  accumulator_set<double, stats<tag::mean, tag::error_of<tag::mean(lazy)> > >
+  accumulator_set<double, stats<tag::mean, tag::error_of<tag::mean> > >
     acc_arra;
-  accumulator_set<double, stats<tag::mean, tag::error_of<tag::mean(lazy)> > >
+  accumulator_set<double, stats<tag::mean, tag::error_of<tag::mean> > >
     acc_time;
-  accumulator_set<double, stats<tag::mean, tag::error_of<tag::mean(lazy)> > >
+  accumulator_set<double, stats<tag::mean, tag::error_of<tag::mean> > >
     acc_size;
 
   for (int test = 0; test < 100; ++test)
@@ -284,13 +283,13 @@ for_a_sample(int R, const randis &d, const condition &sc)
 
   sample_results result;
   result.probability.first = mean(acc_prob);
-  result.probability.second = accumulators::error_of<tag::mean(lazy)>(acc_prob);
+  result.probability.second = accumulators::error_of<tag::mean>(acc_prob);
   result.arrangements.first = mean(acc_arra);
-  result.arrangements.second = accumulators::error_of<tag::mean(lazy)>(acc_arra);
+  result.arrangements.second = accumulators::error_of<tag::mean>(acc_arra);
   result.time.first = mean(acc_time);
-  result.time.second = accumulators::error_of<tag::mean(lazy)>(acc_time);
+  result.time.second = accumulators::error_of<tag::mean>(acc_time);
   result.size.first = mean(acc_size);
-  result.size.second = accumulators::error_of<tag::mean(lazy)>(acc_size);
+  result.size.second = accumulators::error_of<tag::mean>(acc_size);
   return result;
 }
 
@@ -302,7 +301,7 @@ for_a_distro(const randis &d, const condition &sc)
 {
   cout << "# For a random distro: " << d.to_string() << endl;
 
-  for (int R = 1; R <= 10; ++R)
+  for (int R = 2; R <= 10; R += 2)
     {
       sample_results sr = for_a_sample(R, d, sc);
       cout << R << " "
@@ -333,17 +332,13 @@ main()
 {
   minstd_rand gen;
 
-  for_a_sc(gen, time_condition(1e-3));
+  for_a_sc(gen, size_condition(1000));
+
   for_a_sc(gen, time_condition(1e-2));
-  for_a_sc(gen, time_condition(1e-1));
 
-  for_a_sc(gen, ratio_condition(1e-1));
-  for_a_sc(gen, ratio_condition(1e-2));
-  for_a_sc(gen, ratio_condition(1e-3));
+  for_a_sc(gen, rati_condition(1e-2));
 
-  for_a_sc(gen, prob_condition(0.1));
   for_a_sc(gen, prob_condition(0.5));
-  for_a_sc(gen, prob_condition(0.9));
 
   return 0;
 }
