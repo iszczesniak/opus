@@ -1,12 +1,8 @@
-Graph {
-  a; b; c; d; e; f;
+digraph {
+  a; b; c; d;
 
-  a -- b [distance = "100", lambdas = "8"]
-  b -- c [distance = "200", lambdas = "8"]
-  c -- d [distance = "80", lambdas = "8"]
-  b -- e [distance = "40", lambdas = "8"]
-  c -- f [distance = "100", lambdas = "4"]
-  a -- e [distance = "210", lambdas = "4"]
-  e -- f [distance = "340", lambdas = "8"]
-  f -- d [distance = "50", lambdas = "4"]
+  a -> b [distance = "100", lambdas = "8"]
+  b -> d [distance = "200", lambdas = "8"]
+  a -> c [distance = "80", lambdas = "8"]
+  c -> d [distance = "40", lambdas = "8"]
 }

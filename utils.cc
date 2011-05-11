@@ -17,23 +17,33 @@ using namespace std;
 
 void complete_graph(Graph &g)
 {
-  // Here we do all-pair shortest path.  There are two things to note.
-  // 1: We could use the Floyd-Warshal or the Johnson algorithms here,
-  // but they return only the distances.  They don't return the
-  // parents. 2: We want to shortest paths to a destination from other
-  // nodes, and the Dijksta algorithm does the opposite: it returns
-  // the shortest paths from a source node to other nodes.  For us it
-  // doesn't matter, because links are undirected.
-  vector<int> dist(num_vertices(g));
-  vector<Vertex> pred(num_vertices(g));
+  int n = num_vertices(g);
 
+  // Here we do all-pair shortest path.  We could use the
+  // Floyd-Warshal or the Johnson algorithms here, but they return
+  // only the distances.  They don't return the parents.
+  vector<vector<int> > dist(n, vector<int>(n));
+  vector<vector<Vertex> > pred(n, vector<Vertex>(n));
   BGL_FORALL_VERTICES (v, g, Graph)
-    {
-      dijkstra_shortest_paths
-        (g, v, predecessor_map(&pred[0]).distance_map(&dist[0]));
+    dijkstra_shortest_paths(g, v, predecessor_map(&pred[v][0]).distance_map(&dist[v][0]));
 
-      put(vertex_distance, g, v, dist);
-      put(vertex_predecessor, g, v, pred);
+  // We need to modify the results, because Dijkstra finds the
+  // shortest paths from one to many, and we need from many to one.
+  // If we view the dist and pred vectors as matrixes, then we need to
+  // transpose them.
+  BGL_FORALL_VERTICES (vd, g, Graph)
+    {
+      vector<int> dist_t(n);
+      vector<Vertex> pred_t(n);
+
+      BGL_FORALL_VERTICES (vs, g, Graph)
+	{
+	  dist_t[vs] = dist[vs][vd];
+	  pred_t[vs] = pred[vs][vd];
+	}
+
+      put(vertex_distance, g, vd, dist_t);
+      put(vertex_predecessor, g, vd, pred_t);
     }
 
   // Here we calculate the matrix of packet preferences.  The
