@@ -12,7 +12,7 @@ using namespace boost;
 class packet_prefs;
 
 typedef
-adjacency_list_traits<vecS, vecS, undirectedS>::vertex_descriptor
+adjacency_list_traits<vecS, vecS, directedS>::vertex_descriptor
 Vertex;
 
 /**
@@ -22,7 +22,7 @@ Vertex;
  * is the number of wavelengths.
  */
 typedef
-adjacency_list <vecS, vecS, undirectedS,
+adjacency_list <vecS, vecS, directedS,
                 property<vertex_name_t, string,
                 property<vertex_distance_t, vector<int>,
                 property<vertex_predecessor_t, vector<Vertex>,
