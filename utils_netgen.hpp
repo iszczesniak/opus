@@ -81,6 +81,7 @@ add_random_edge(Graph &g, std::set<Vertex> &lonely,
       Vertex dst = get_random_element(lonely, gen);
       move(dst, g, lonely, connected, saturated);
       bool status = add_edge(src, dst, g).second;
+      status &= add_edge(dst, src, g).second;
       assert(status);
       return status;
     }
@@ -92,6 +93,7 @@ add_random_edge(Graph &g, std::set<Vertex> &lonely,
       Vertex src = get_random_element(lonely, gen);
       Vertex dst = get_random_element(connected, gen);
       bool status = add_edge(src, dst, g).second;
+      status &= add_edge(dst, src, g).second;
       assert(status);
       move(src, g, lonely, connected, saturated);
       move_if_needed(dst, g, connected, saturated);
@@ -112,6 +114,7 @@ add_random_edge(Graph &g, std::set<Vertex> &lonely,
       // Now pick from the sifted set.
       Vertex dst = get_random_element(sifted, gen);
       bool status = add_edge(src, dst, g).second;
+      status &= add_edge(dst, src, g).second;
       assert(status);
       move_if_needed(src, g, connected, saturated);
       move_if_needed(dst, g, connected, saturated);
