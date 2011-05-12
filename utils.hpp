@@ -161,6 +161,9 @@ get_distance(Vertex i, Vertex j, const Graph &g);
 int
 get_output_capacity(const Graph& g, Vertex j);
 
+/**
+ * Prints the shortes path from node i to node j in graph g.
+ */
 std::string
 path_to_string(Vertex i, Vertex j, const Graph &g);
 
