@@ -20,6 +20,9 @@ Vertex;
  *
  * Property edge_weight is the distance, while property edge_weight2
  * is the number of wavelengths.
+ *
+ * The property vertex_distance for node i is a vector whose
+ * element j gives the shortest distances to node j from node i.
  */
 typedef
 adjacency_list <vecS, vecS, directedS,
