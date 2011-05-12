@@ -1,8 +1,8 @@
 digraph {
   a; b; c; d;
 
-  a -> b [distance = "100", lambdas = "8"]
-  b -> d [distance = "200", lambdas = "8"]
-  a -> c [distance = "80", lambdas = "8"]
-  c -> d [distance = "40", lambdas = "8"]
+  a -> b [distance = "1", lambdas = "1"]
+  b -> d [distance = "1", lambdas = "1"]
+  a -> c [distance = "2", lambdas = "1"]
+  c -> d [distance = "2", lambdas = "1"]
 }
