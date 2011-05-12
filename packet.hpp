@@ -168,8 +168,8 @@ ostream &operator << (ostream &out, const packet &pkt);
 /**
  * This is a function object to compare preferences of a packet, which
  * we use for sorting packet preferences.  For this task we need to
- * know the graph (graph g in the constructor) and where the packets
- * is going (vertex i in the constructor).
+ * know graph g, node j where the packet currently is, and node i
+ * where the packets is going.
  */
 template<typename G>
 class cmp_pref
@@ -177,7 +177,7 @@ class cmp_pref
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
   typedef typename graph_traits<Graph>::edge_descriptor Edge;
 
-  // The node where packets are currently.
+  // The node where packets currently are.
   const Vertex j;
   // The node where packets are going.
   const Vertex i;
@@ -187,6 +187,11 @@ public:
   cmp_pref(const Vertex _j, const Vertex _i, const G &_g) :
     j(_j), i(_i), g(_g) {}
 
+  /**
+   * Nodes a and b are the neighor nodes of node j.  The function is
+   * true, if by going to node a we would reach node i at a smaller
+   * cost than by going to node b.
+   */
   bool operator()(const Vertex a, const Vertex b)
   {
     Edge ea = edge(j, a, g).first;
