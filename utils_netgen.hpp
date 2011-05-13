@@ -134,7 +134,7 @@ add_random_edge(Graph &g, std::set<Vertex> &lonely,
  */
 template<typename T>
 int
-generate_graph(Graph &g, int nodes, int edges, T &gen)
+generate_random_graph(Graph &g, int nodes, int edges, T &gen)
 {
   assert(nodes >= 2);
   assert(edges >= 0);
@@ -162,6 +162,16 @@ generate_graph(Graph &g, int nodes, int edges, T &gen)
       }
 
   return edges;
+}
+
+/**
+ * Generate n nodes and interconnect them with a Benes network.
+ */
+template<typename T>
+int
+generate_benes_graph(Graph &g, int nodes, T &gen)
+{
+  assert(nodes >= 2);
 }
 
 #endif /* UTILS_NETGEN_HPP */
