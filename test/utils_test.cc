@@ -14,6 +14,17 @@ using namespace std;
 int
 main()
 {
+  // Test the function pop_count.
+  {
+    EXPECT(pop_count(0), 0);
+    EXPECT(pop_count(1), 1);
+    EXPECT(pop_count(2), 1);
+    EXPECT(pop_count(3), 2);
+    EXPECT(pop_count(15), 4);
+    EXPECT(pop_count(255), 8);
+    EXPECT(pop_count(65535), 16);
+  }
+
   // This is the test for various graphs utilities.
   {
     Graph g;
@@ -148,11 +159,11 @@ main()
     for(int n = 3; n < 50; ++n)
       {
         int e = n * (n - 1) / 2;
-        EXPECT(generate_graph(g, n, e - 1, gen), e - 1);
+        EXPECT(generate_random_graph(g, n, e - 1, gen), e - 1);
         TEST(check_components(g));
-        EXPECT(generate_graph(g, n, e, gen), e);
+        EXPECT(generate_random_graph(g, n, e, gen), e);
         TEST(check_components(g));
-        EXPECT(generate_graph(g, n, e + 1, gen), e);
+        EXPECT(generate_random_graph(g, n, e + 1, gen), e);
         TEST(check_components(g));
       }
   }

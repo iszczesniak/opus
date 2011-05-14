@@ -171,7 +171,7 @@ template<typename T>
 int
 generate_benes_graph(Graph &g, int nodes, T &gen)
 {
-  assert(nodes >= 2);
+  assert(pop_count(nodes) == 1);
 }
 
 #endif /* UTILS_NETGEN_HPP */
