@@ -57,3 +57,40 @@ move_if_needed(Vertex v, const Graph &g, std::set<Vertex> &connected,
       saturated.insert(v);
     }
 }
+
+int
+benes_interconnect(Graph &g, const vector<Vertex> &inputs,
+		   const vector<Vertex> &outputs)
+{
+  int size = inputs.size();
+  assert(size == outputs.size());
+
+  if (size == 2)
+    {
+      Vertex nv = add_vertex(g);
+      // Inputs to the node
+      add_edge(inputs[0], nv, g);
+      add_edge(inputs[1], nv, g);
+      // Outputs of the node
+      add_edge(nv, outputs[0], g);
+      add_edge(nv, outputs[1], g);
+    }
+  else
+    assert(("I shouldn't have gotten here.", false));
+}
+
+int
+generate_benes_graph(Graph &g, int nodes)
+{
+  assert(num_vertices(g) == 0);
+  assert(pop_count(nodes) == 1);
+  assert(nodes != 1);
+
+  // Create a graph with n
+  g = Graph(nodes);
+
+  // This is the vector of nodes.
+  vector<Vertex> von(nodes);
+  copy(vertices(g).first, vertices(g).second, von.begin());
+  benes_interconnect(g, von, von);
+}

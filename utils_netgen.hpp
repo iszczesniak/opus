@@ -165,13 +165,18 @@ generate_random_graph(Graph &g, int nodes, int edges, T &gen)
 }
 
 /**
+ * Generate a Benes interconnection network that connects the input
+ * nodes given in the inputs vector with the output nodes given in the
+ * outputs vector.
+ */
+int
+benes_interconnect(Graph &g, const vector<Vertex> &inputs,
+		   const vector<Vertex> &outputs);
+
+/**
  * Generate n nodes and interconnect them with a Benes network.
  */
-template<typename T>
 int
-generate_benes_graph(Graph &g, int nodes, T &gen)
-{
-  assert(pop_count(nodes) == 1);
-}
+generate_benes_graph(Graph &g, int nodes);
 
 #endif /* UTILS_NETGEN_HPP */

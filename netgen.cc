@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
   if (args.gt == netgen_args::random)
     generate_random_graph(g, args.nr_nodes, args.nr_edges, gen);
   else
-    generate_benes_graph(g, args.nr_nodes, gen);
+    generate_benes_graph(g, args.nr_nodes);
 
   // Make sure there are no parallel links.
   assert(test_parallel(g));
