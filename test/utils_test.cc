@@ -186,5 +186,16 @@ main()
     EXPECT(i->size(), 1);
   }
 
+  // Test the 2x2 Benes network.
+  {
+    Graph g;
+    generate_benes_graph(g, 2);
+    EXPECT(num_vertices(g), 3);
+    TEST(edge(0, 2, g).second);
+    TEST(edge(1, 2, g).second);
+    TEST(edge(2, 0, g).second);
+    TEST(edge(2, 1, g).second);
+  }
+
   return 0;
 }
