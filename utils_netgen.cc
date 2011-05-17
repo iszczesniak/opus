@@ -75,6 +75,40 @@ benes_interconnect(Graph &g, const vector<Vertex> &inputs,
       add_edge(nv, outputs[0], g);
       add_edge(nv, outputs[1], g);
     }
+  else if (size == 4)
+    {
+      // Top nodes of the interconnection network.
+      Vertex t1 = add_vertex(g);
+      Vertex t2 = add_vertex(g);
+      Vertex t3 = add_vertex(g);
+
+      // Bottom nodes of the interconnection network.
+      Vertex b1 = add_vertex(g);
+      Vertex b2 = add_vertex(g);
+      Vertex b3 = add_vertex(g);
+
+      // Inputs to interconnection network.
+      add_edge(inputs[0], t1, g);
+      add_edge(inputs[1], t1, g);
+      add_edge(inputs[2], b1, g);
+      add_edge(inputs[3], b1, g);
+
+      // Outputs of the interconnection network.
+      add_edge(t3, outputs[0], g);
+      add_edge(t3, outputs[1], g);
+      add_edge(b3, outputs[2], g);
+      add_edge(b3, outputs[3], g);
+
+      // The links of the interconnection network.
+      add_edge(t1, t2, g);
+      add_edge(t2, t3, g);
+      add_edge(b1, b2, g);
+      add_edge(b2, b3, g);
+      add_edge(t1, b2, g);
+      add_edge(b1, t2, g);
+      add_edge(t2, b3, g);
+      add_edge(b2, t3, g);
+    }
   else
     assert(("I shouldn't have gotten here.", false));
 }
