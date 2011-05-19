@@ -21,6 +21,25 @@ check_shortest_paths(const Graph &g, int n, int d)
         EXPECT(get(vertex_distance, g, i)[j], d);
 }
 
+// Test the number of nodes in the network of n nodes interconnected
+// by the Benes interconnect.
+void
+test_benes_network(int n)
+{
+  Graph g;
+  generate_benes_graph(g, n);
+  // This is the number of nodes in the Benes interconnect.
+  int nodes = (n / 2) * (2 * log2(n) - 1);
+  // Plus the number of nodes being interconnected.
+  nodes += n;
+  EXPECT(num_vertices(g), nodes);
+  set_edge_property(g, edge_weight, 1);
+  complete_graph(g);
+  // The distance between any pair of n interconnected nodes is dist.
+  int dist = 2 * log2(n);
+  check_shortest_paths(g, n, dist);
+}
+
 int
 main()
 {
@@ -196,30 +215,10 @@ main()
     EXPECT(i->size(), 1);
   }
 
-  // Test the 2x2 Benes network.
+  // Test the Benes network of various sizes.
   {
-    Graph g;
-    generate_benes_graph(g, 2);
-    EXPECT(num_vertices(g), 3);
-    TEST(edge(0, 2, g).second);
-    TEST(edge(1, 2, g).second);
-    TEST(edge(2, 0, g).second);
-    TEST(edge(2, 1, g).second);
-    set_edge_property(g, edge_weight, 1);
-    complete_graph(g);
-    check_shortest_paths(g, 2, 2);
-  }
-
-  // Test the 4x4 Benes network.
-  {
-    Graph g;
-    generate_benes_graph(g, 4);
-    // The total number of nodes is 10, because there are 6 nodes in
-    // the interconnection network, and 4 nodes being interconnected.
-    EXPECT(num_vertices(g), 6 + 4);
-    set_edge_property(g, edge_weight, 1);
-    complete_graph(g);
-    check_shortest_paths(g, 4, 4);
+    for (int i = 16; i != 1; i >>= 1)
+      test_benes_network(i);
   }
 
   return 0;

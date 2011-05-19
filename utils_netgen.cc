@@ -110,21 +110,45 @@ benes_interconnect(Graph &g, const vector<Vertex> &inputs,
       add_edge(b2, t3, g);
     }
   else
-    assert(("I shouldn't have gotten here.", false));
+    {
+      int s2 = size / 2;
+      vector<Vertex> in_stage(s2), out_stage(s2);
+
+      // Create the new input stage.
+      for (int i = 0; i < s2; ++i)
+	{
+	  Vertex v = add_vertex(g);
+	  in_stage[i] = v;
+	  add_edge(inputs[2 * i], v, g);
+	  add_edge(inputs[2 * i + 1], v, g);
+	}
+
+      // Create the new output stage.
+      for (int i = 0; i < s2; ++i)
+	{
+	  Vertex v = add_vertex(g);
+	  out_stage[i] = v;
+	  add_edge(v, inputs[2 * i], g);
+	  add_edge(v, inputs[2 * i + 1], g);
+	}
+
+      benes_interconnect(g, in_stage, out_stage);
+      benes_interconnect(g, in_stage, out_stage);
+    }
 }
 
 int
-generate_benes_graph(Graph &g, int nodes)
+generate_benes_graph(Graph &g, int n)
 {
   assert(num_vertices(g) == 0);
-  assert(pop_count(nodes) == 1);
-  assert(nodes != 1);
+  assert(pop_count(n) == 1);
+  assert(n != 1);
 
-  // Create a graph with n
-  g = Graph(nodes);
+  // Create a graph with n nodes
+  g = Graph(n);
 
   // This is the vector of nodes.
-  vector<Vertex> von(nodes);
+  vector<Vertex> von(n);
   copy(vertices(g).first, vertices(g).second, von.begin());
   benes_interconnect(g, von, von);
 }

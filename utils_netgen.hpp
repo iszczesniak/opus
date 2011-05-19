@@ -189,6 +189,6 @@ benes_interconnect(Graph &g, const vector<Vertex> &inputs,
  * Generate n nodes and interconnect them with a Benes network.
  */
 int
-generate_benes_graph(Graph &g, int nodes);
+generate_benes_graph(Graph &g, int n);
 
 #endif /* UTILS_NETGEN_HPP */
