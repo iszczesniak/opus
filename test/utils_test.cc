@@ -217,7 +217,7 @@ main()
 
   // Test the Benes network of various sizes.
   {
-    for (int i = 16; i != 1; i >>= 1)
+    for (int i = 32; i != 1; i >>= 1)
       test_benes_network(i);
   }
 

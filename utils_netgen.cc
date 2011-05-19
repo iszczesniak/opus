@@ -128,8 +128,8 @@ benes_interconnect(Graph &g, const vector<Vertex> &inputs,
 	{
 	  Vertex v = add_vertex(g);
 	  out_stage[i] = v;
-	  add_edge(v, inputs[2 * i], g);
-	  add_edge(v, inputs[2 * i + 1], g);
+	  add_edge(v, outputs[2 * i], g);
+	  add_edge(v, outputs[2 * i + 1], g);
 	}
 
       benes_interconnect(g, in_stage, out_stage);
