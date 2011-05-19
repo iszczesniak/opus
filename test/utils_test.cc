@@ -7,9 +7,19 @@
 
 #include <gsl/gsl_randist.h>
 
-// This tests the utilities from utils.hpp.
-
 using namespace std;
+
+// Make sure that the shortest paths in graph g are all equal to
+// distance d between any pair of nodes with vertex numbers below
+// number n.
+void
+check_shortest_paths(const Graph &g, int n, int d)
+{
+  BGL_FORALL_VERTICES(i, g, Graph)
+    BGL_FORALL_VERTICES(j, g, Graph)
+      if (i != j && i < n && j < n)
+        EXPECT(get(vertex_distance, g, i)[j], d);
+}
 
 int
 main()
@@ -195,6 +205,21 @@ main()
     TEST(edge(1, 2, g).second);
     TEST(edge(2, 0, g).second);
     TEST(edge(2, 1, g).second);
+    set_edge_property(g, edge_weight, 1);
+    complete_graph(g);
+    check_shortest_paths(g, 2, 2);
+  }
+
+  // Test the 4x4 Benes network.
+  {
+    Graph g;
+    generate_benes_graph(g, 4);
+    // The total number of nodes is 10, because there are 6 nodes in
+    // the interconnection network, and 4 nodes being interconnected.
+    EXPECT(num_vertices(g), 6 + 4);
+    set_edge_property(g, edge_weight, 1);
+    complete_graph(g);
+    check_shortest_paths(g, 4, 4);
   }
 
   return 0;

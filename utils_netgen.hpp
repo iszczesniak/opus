@@ -20,6 +20,18 @@ void
 name_vertices(Graph &g);
 
 /**
+ * Set the given edge property to the given value.
+ */
+template<typename P, typename G, typename V>
+void set_edge_property(G& g, P, V v)
+{
+  typename property_map<G, P>::type p = get(P(), g);
+  typename graph_traits<G>::edge_iterator i, e;
+  for (tie(i, e) = edges(g); i != e; ++i)
+    p[*i] = v;
+}
+
+/**
  * Sets the distance property on edges.
  */
 template<typename T>
