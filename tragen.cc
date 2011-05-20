@@ -27,7 +27,15 @@ int main(int argc, char* argv[])
 
   // The traffic matrix.
   fp_matrix tm;
-  generate_tm(g, tm, args.nr_demands, args.poisson_mean);
+  if (!args.nlimit.first)
+    generate_tm(g, tm, args.nr_demands, args.poisson_mean);
+  else
+    {
+      set<Vertex> s;
+      for(int i = 0; i < args.nlimit.second; ++i)
+	s.insert(i);
+      generate_tm(g, tm, args.nr_demands, args.poisson_mean, s);
+    }
   ofstream tm_file(args.output_filename.c_str());
   print_tm(g, tm, tm_file);
   tm_file.close();

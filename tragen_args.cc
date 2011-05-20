@@ -29,7 +29,10 @@ process_tragen_args(int argc, char *argv[])
          "the name of the output file with traffic matrix")
 
         ("seed,s", po::value<int>()->default_value(1),
-         "the seed of the random number generator");
+         "the seed of the random number generator")
+
+        ("nlimit,n", po::value<int>(),
+         "the number of first nodes for which to generate traffic");
 
       po::variables_map vm;
       po::store(po::command_line_parser(argc, argv).options(opts).run(), vm);
@@ -76,6 +79,9 @@ process_tragen_args(int argc, char *argv[])
                << "file name.\n";
           exit(1);
         }
+
+      if(vm.count("nlimit"))
+        result.nlimit = make_pair(true, vm["nlimit"].as<int>());
 
       // The seed for the random number generator.
       result.seed = vm["seed"].as<int>();

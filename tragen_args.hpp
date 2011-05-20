@@ -25,6 +25,9 @@ struct tragen_args
 
   /// The seed of the random number generator.
   int seed;
+
+  /// The number of first nodes for which to generate the traffic.
+  pair<bool, int> nlimit;
 };
 
 /**
