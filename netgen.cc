@@ -39,9 +39,13 @@ int main(int argc, char* argv[])
   dp.property("distance", get(edge_weight, g));
   dp.property("lambdas", get(edge_weight2, g));
 
-  ofstream dot_file(args.output_filename.c_str());
-  write_graphviz(dot_file, g, dp);
-  dot_file.close();
+  if (args.output_filename.c_str())
+    {
+      ofstream file(args.output_filename.c_str());
+      write_graphviz(file, g, dp);
+    }
+  else
+    write_graphviz(cout, g, dp);
 
   return 0;
 }

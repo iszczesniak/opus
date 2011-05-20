@@ -58,12 +58,6 @@ process_netgen_args(int argc, char *argv[])
 
       if(vm.count("output"))
         result.output_filename = vm["output"].as<string>();
-      else
-        {
-          cerr << "You need to give me the output "
-               << "file name.\n";
-          exit(1);
-        }
 
       // The seed for the random number generator.
       result.seed = vm["seed"].as<int>();
