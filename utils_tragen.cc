@@ -14,7 +14,13 @@ generate_tm(const Graph &g, fp_matrix &tm, int demands, double poisson_mean)
 {
   assert(check_components(g));
   set<Vertex> s = *get_components(g).begin();
+  generate_tm(g, tm, demands, poisson_mean, s);
+}
 
+void
+generate_tm(const Graph &g, fp_matrix &tm, int demands, double poisson_mean,
+	    set<Vertex> s)
+{
   minstd_rand gen;
 
   for(int d = 0; d < demands; ++d)
