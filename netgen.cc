@@ -33,11 +33,19 @@ int main(int argc, char* argv[])
   // Name the vertices.
   name_vertices(g);
 
-  // The distances are from 50 to 200 km included.
-  set_distances(g, 50, 200, gen);
-
-  // The lambdas are from 1 to 40 included.
-  set_lambdas(g, 1, 40, gen);
+  // Set the distances and lambdas.
+  if (args.gt.second == netgen_args::random)
+    {
+      // The distances are from 50 to 200 km included.
+      set_distances(g, 50, 200, gen);
+      // The lambdas are from 1 to 40 included.
+      set_lambdas(g, 1, 40, gen);
+    }
+  else
+    {
+      set_edge_property(g, edge_weight, 1);
+      set_edge_property(g, edge_weight2, 1);
+    }
 
   dynamic_properties dp;
 
