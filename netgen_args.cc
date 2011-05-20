@@ -8,6 +8,37 @@
 using namespace std;
 namespace po = boost::program_options;
 
+void
+check(const netgen_args &args)
+{
+  // The number of nodes must be given for both the random and benes
+  // networks.
+  if (!args.nr_nodes.first)
+    {
+      cerr << "You need to give me the number "
+	   << "of nodes to generate.\n";
+      exit(1);
+    }
+
+  // The number of edges must be given for the random network.
+  if (args.gt.second == netgen_args::random &&
+      !args.nr_edges.first)
+    {
+      cerr << "You need to give me the number "
+	   << "of edges to generate.\n";
+      exit(1);
+    }
+
+  // The right number of nodes must be given for the Benes network.
+  if (result.gt.second == netgen_args::benes &&
+      pop_count(result.nr_nodes.second) != 1)
+    {
+      cerr << "The number of nodes for the Benes network"
+	   << " must be the power of two.\n";
+      exit(1);
+    }
+}
+
 netgen_args
 process_netgen_args(int argc, char *argv[])
 {
@@ -50,27 +81,13 @@ process_netgen_args(int argc, char *argv[])
           exit(0);
         }
 
+      // The number of nodes.
       if(vm.count("nodes"))
         result.nr_nodes = make_pair(true, vm["nodes"].as<int>());
-      else
-        {
-          cerr << "You need to give me the number "
-               << "of nodes to generate.\n";
-          exit(1);
-        }
 
+      // The number of edges.
       if(vm.count("edges"))
         result.nr_edges = make_pair(true, vm["edges"].as<int>());
-      else
-        {
-          cerr << "You need to give me the number "
-               << "of edges to generate.\n";
-          exit(1);
-        }
-
-      // The name of the output file.
-      if(vm.count("output"))
-        result.output_filename = make_pair(true, vm["output"].as<string>());
 
       // The string describing the network type.
       string type = vm["type"].as<string>();
@@ -86,17 +103,15 @@ process_netgen_args(int argc, char *argv[])
 	}
       else
 	result.gt = make_pair(true, gtm[type]);
-
-      if (result.gt.second == netgen_args::benes &&
-	  pop_count(result.nr_nodes.second) != 1)
-	{
-          cerr << "The number of nodes for the Benes network"
-	       << " must be the power of two.\n";
-          exit(1);
-	}
 	  
       // The seed for the random number generator.
       result.seed = make_pair(true, vm["seed"].as<int>());
+
+      // The name of the output file.
+      if(vm.count("output"))
+        result.output_filename = make_pair(true, vm["output"].as<string>());
+
+      check(result);
     }
   catch(const std::exception& e)
     {
