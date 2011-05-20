@@ -21,21 +21,32 @@ check(const netgen_args &args)
     }
 
   // The number of edges must be given for the random network.
-  if (args.gt.second == netgen_args::random &&
-      !args.nr_edges.first)
+  if (args.gt.second == netgen_args::random)
     {
-      cerr << "You need to give me the number "
-	   << "of edges to generate.\n";
-      exit(1);
+      if (!args.nr_edges.first)
+	{
+	  cerr << "You need to give me the number "
+	       << "of edges to generate.\n";
+	  exit(1);
+	}
     }
 
   // The right number of nodes must be given for the Benes network.
-  if (result.gt.second == netgen_args::benes &&
-      pop_count(result.nr_nodes.second) != 1)
+  if (args.gt.second == netgen_args::benes)
     {
-      cerr << "The number of nodes for the Benes network"
-	   << " must be the power of two.\n";
-      exit(1);
+      if (pop_count(args.nr_nodes.second) != 1)
+	{
+	  cerr << "The number of nodes for the Benes network"
+	       << " must be the power of two.\n";
+	  exit(1);
+	}
+
+      if (args.nr_edges.first)
+	{
+	  cerr << "You don't need to give the number of edges "
+	       << "for the Benes network.\n";
+	  exit(1);
+	}
     }
 }
 
