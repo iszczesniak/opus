@@ -15,19 +15,19 @@ struct netgen_args
   enum graph_type {random, benes};
 
   /// Remembers the graph type.
-  graph_type gt;
+  pair<bool, graph_type> gt;
 
   /// The number of nodes in the graph.
-  int nr_nodes;
+  pair<bool, int> nr_nodes;
 
   /// The number of edges in the graph.
-  int nr_edges;
+  pair<bool, int> nr_edges;
 
   /// The name of the output file.
-  string output_filename;
+  pair<bool, string> output_filename;
 
   /// The seed of the random number generator.
-  int seed;
+  pair<bool, int> seed;
 };
 
 /**

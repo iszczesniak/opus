@@ -15,17 +15,17 @@ int main(int argc, char* argv[])
   netgen_args args = process_netgen_args(argc, argv);
 
   minstd_rand gen;
-  gen.seed(args.seed);
+  gen.seed(args.seed.second);
 
   // Create a graph.  The source and the destination nodes of an edge
   // are chosen randomly, but they are not the same.  No parallel
   // edges are allowed.
   Graph g;
 
-  if (args.gt == netgen_args::random)
-    generate_random_graph(g, args.nr_nodes, args.nr_edges, gen);
+  if (args.gt.second == netgen_args::random)
+    generate_random_graph(g, args.nr_nodes.second, args.nr_edges.second, gen);
   else
-    generate_benes_graph(g, args.nr_nodes);
+    generate_benes_graph(g, args.nr_nodes.second);
 
   // Make sure there are no parallel links.
   assert(test_parallel(g));
@@ -45,9 +45,9 @@ int main(int argc, char* argv[])
   dp.property("distance", get(edge_weight, g));
   dp.property("lambdas", get(edge_weight2, g));
 
-  if (args.output_filename.c_str())
+  if (args.output_filename.first)
     {
-      ofstream file(args.output_filename.c_str());
+      ofstream file(args.output_filename.second.c_str());
       write_graphviz(file, g, dp);
     }
   else

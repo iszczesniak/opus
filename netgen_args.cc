@@ -51,7 +51,7 @@ process_netgen_args(int argc, char *argv[])
         }
 
       if(vm.count("nodes"))
-        result.nr_nodes = vm["nodes"].as<int>();
+        result.nr_nodes = make_pair(true, vm["nodes"].as<int>());
       else
         {
           cerr << "You need to give me the number "
@@ -60,7 +60,7 @@ process_netgen_args(int argc, char *argv[])
         }
 
       if(vm.count("edges"))
-        result.nr_edges = vm["edges"].as<int>();
+        result.nr_edges = make_pair(true, vm["edges"].as<int>());
       else
         {
           cerr << "You need to give me the number "
@@ -68,8 +68,9 @@ process_netgen_args(int argc, char *argv[])
           exit(1);
         }
 
+      // The name of the output file.
       if(vm.count("output"))
-        result.output_filename = vm["output"].as<string>();
+        result.output_filename = make_pair(true, vm["output"].as<string>());
 
       // The string describing the network type.
       string type = vm["type"].as<string>();
@@ -84,10 +85,10 @@ process_netgen_args(int argc, char *argv[])
 	  exit(1);
 	}
       else
-	result.gt = gtm[type];
+	result.gt = make_pair(true, gtm[type]);
 
-      if (result.gt == netgen_args::benes &&
-	  pop_count(result.nr_nodes) != 1)
+      if (result.gt.second == netgen_args::benes &&
+	  pop_count(result.nr_nodes.second) != 1)
 	{
           cerr << "The number of nodes for the Benes network"
 	       << " must be the power of two.\n";
@@ -95,7 +96,7 @@ process_netgen_args(int argc, char *argv[])
 	}
 	  
       // The seed for the random number generator.
-      result.seed = vm["seed"].as<int>();
+      result.seed = make_pair(true, vm["seed"].as<int>());
     }
   catch(const std::exception& e)
     {
