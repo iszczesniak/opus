@@ -1,8 +1,8 @@
 TESTS = arr_queue_test distro_test geometric_test nodistro_test	\
 poisson_test polynomial_test serialization_test tabdistro_test	\
-utils_test utils_sim_test test_arr_queue
+utils_test utils_sim_test
 
-PERFORM = test_adm test_rou
+PERFORM = test_adm test_rou test_arr_queue
 
 OBJS = ../analysis.o ../arguments.o ../arr_queue.o ../distro.o		\
 ../edge_probs.o ../generate.o ../graph.o ../graph_serialization.o	\

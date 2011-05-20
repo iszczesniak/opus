@@ -161,6 +161,9 @@ get_distance(Vertex i, Vertex j, const Graph &g);
 int
 get_output_capacity(const Graph& g, Vertex j);
 
+/**
+ * Prints the shortes path from node i to node j in graph g.
+ */
 std::string
 path_to_string(Vertex i, Vertex j, const Graph &g);
 
@@ -339,5 +342,23 @@ get_components(const Graph &g);
  */
 bool
 check_components(const Graph &g);
+
+/**
+ * Count the number of bits turned on in an integer number.
+ */
+template<typename T>
+int
+pop_count(T number)
+{
+  int count = 0;
+
+  while(number)
+    {
+      count += (number & 1);
+      number >>= 1;
+    }
+
+  return count;
+}
 
 #endif /* UTILS_HPP */

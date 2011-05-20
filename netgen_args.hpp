@@ -11,6 +11,12 @@ using namespace std;
  */
 struct netgen_args
 {
+  /// Type of graph.
+  enum graph_type {random, benes};
+
+  /// Remembers the graph type.
+  graph_type gt;
+
   /// The number of nodes in the graph.
   int nr_nodes;
 

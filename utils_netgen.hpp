@@ -20,6 +20,18 @@ void
 name_vertices(Graph &g);
 
 /**
+ * Set the given edge property to the given value.
+ */
+template<typename P, typename G, typename V>
+void set_edge_property(G& g, P, V v)
+{
+  typename property_map<G, P>::type p = get(P(), g);
+  typename graph_traits<G>::edge_iterator i, e;
+  for (tie(i, e) = edges(g); i != e; ++i)
+    p[*i] = v;
+}
+
+/**
  * Sets the distance property on edges.
  */
 template<typename T>
@@ -81,6 +93,7 @@ add_random_edge(Graph &g, std::set<Vertex> &lonely,
       Vertex dst = get_random_element(lonely, gen);
       move(dst, g, lonely, connected, saturated);
       bool status = add_edge(src, dst, g).second;
+      status &= add_edge(dst, src, g).second;
       assert(status);
       return status;
     }
@@ -92,6 +105,7 @@ add_random_edge(Graph &g, std::set<Vertex> &lonely,
       Vertex src = get_random_element(lonely, gen);
       Vertex dst = get_random_element(connected, gen);
       bool status = add_edge(src, dst, g).second;
+      status &= add_edge(dst, src, g).second;
       assert(status);
       move(src, g, lonely, connected, saturated);
       move_if_needed(dst, g, connected, saturated);
@@ -112,6 +126,7 @@ add_random_edge(Graph &g, std::set<Vertex> &lonely,
       // Now pick from the sifted set.
       Vertex dst = get_random_element(sifted, gen);
       bool status = add_edge(src, dst, g).second;
+      status &= add_edge(dst, src, g).second;
       assert(status);
       move_if_needed(src, g, connected, saturated);
       move_if_needed(dst, g, connected, saturated);
@@ -131,7 +146,7 @@ add_random_edge(Graph &g, std::set<Vertex> &lonely,
  */
 template<typename T>
 int
-generate_graph(Graph &g, int nodes, int edges, T &gen)
+generate_random_graph(Graph &g, int nodes, int edges, T &gen)
 {
   assert(nodes >= 2);
   assert(edges >= 0);
@@ -160,5 +175,20 @@ generate_graph(Graph &g, int nodes, int edges, T &gen)
 
   return edges;
 }
+
+/**
+ * Generate a Benes interconnection network that connects the input
+ * nodes given in the inputs vector with the output nodes given in the
+ * outputs vector.
+ */
+int
+benes_interconnect(Graph &g, const vector<Vertex> &inputs,
+		   const vector<Vertex> &outputs);
+
+/**
+ * Generate n nodes and interconnect them with a Benes network.
+ */
+int
+generate_benes_graph(Graph &g, int n);
 
 #endif /* UTILS_NETGEN_HPP */

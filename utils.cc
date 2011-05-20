@@ -17,13 +17,10 @@ using namespace std;
 
 void complete_graph(Graph &g)
 {
-  // Here we do all-pair shortest path.  There are two things to note.
-  // 1: We could use the Floyd-Warshal or the Johnson algorithms here,
+  // Here we do all-pair shortest path.  We could use the BGL
+  // implementations of Floyd-Warshal or the Johnson algorithms here,
   // but they return only the distances.  They don't return the
-  // parents. 2: We want to shortest paths to a destination from other
-  // nodes, and the Dijksta algorithm does the opposite: it returns
-  // the shortest paths from a source node to other nodes.  For us it
-  // doesn't matter, because links are undirected.
+  // parents, which we need.
   vector<int> dist(num_vertices(g));
   vector<Vertex> pred(num_vertices(g));
 
@@ -193,6 +190,23 @@ get_output_capacity(const Graph& g, Vertex j)
 }
 
 std::string
+trace_path_back(Vertex i, Vertex j, const Graph &g)
+{
+  std::ostringstream str;
+
+  if (i != j)
+    {
+      Vertex prev = get(vertex_predecessor, g, i)[j];
+      str << trace_path_back(i, prev, g) << " -> "
+	  << get(vertex_name, g, j);
+    }
+  else
+    str << get(vertex_name, g, i);
+
+  return str.str();
+}
+
+std::string
 path_to_string(Vertex i, Vertex j, const Graph &g)
 {
   std::ostringstream str;
@@ -200,28 +214,11 @@ path_to_string(Vertex i, Vertex j, const Graph &g)
   str << "From " << get(vertex_name, g, i)
       << " to " << get(vertex_name, g, j);
 
-  // Check if the shortest path from node i to node j exists.
-  if (i == j || get(vertex_predecessor, g, j)[i] != i)
-    {
-      int hops = 0;
-      Vertex curr = i;
-
-      str << ": " << get(vertex_name, g, i);
-
-      while(curr != j)
-        {
-          curr = get(vertex_predecessor, g, j)[curr];
-          str << " -> " << get(vertex_name, g, curr);
-          ++hops;
-        }
-
-      str << ", hops = " << hops;
-      str << ", distance = " << get_distance(i, j, g);
-    }
+  if (get(vertex_predecessor, g, i)[j] != j)
+    str << ": " << trace_path_back(i, j, g)
+	<< ", distance = " << get_distance(i, j, g);
   else
-    {
-      str << "doesn't exist";
-    }
+    str << " doesn't exist.";
 
   return str.str();
 }

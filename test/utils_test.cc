@@ -7,13 +7,53 @@
 
 #include <gsl/gsl_randist.h>
 
-// This tests the utilities from utils.hpp.
-
 using namespace std;
+
+// Make sure that the shortest paths in graph g are all equal to
+// distance d between any pair of nodes with vertex numbers below
+// number n.
+void
+check_shortest_paths(const Graph &g, int n, int d)
+{
+  BGL_FORALL_VERTICES(i, g, Graph)
+    BGL_FORALL_VERTICES(j, g, Graph)
+      if (i != j && i < n && j < n)
+        EXPECT(get(vertex_distance, g, i)[j], d);
+}
+
+// Test the number of nodes in the network of n nodes interconnected
+// by the Benes interconnect.
+void
+test_benes_network(int n)
+{
+  Graph g;
+  generate_benes_graph(g, n);
+  // This is the number of nodes in the Benes interconnect.
+  int nodes = (n / 2) * (2 * log2(n) - 1);
+  // Plus the number of nodes being interconnected.
+  nodes += n;
+  EXPECT(num_vertices(g), nodes);
+  set_edge_property(g, edge_weight, 1);
+  complete_graph(g);
+  // The distance between any pair of n interconnected nodes is dist.
+  int dist = 2 * log2(n);
+  check_shortest_paths(g, n, dist);
+}
 
 int
 main()
 {
+  // Test the function pop_count.
+  {
+    EXPECT(pop_count(0), 0);
+    EXPECT(pop_count(1), 1);
+    EXPECT(pop_count(2), 1);
+    EXPECT(pop_count(3), 2);
+    EXPECT(pop_count(15), 4);
+    EXPECT(pop_count(255), 8);
+    EXPECT(pop_count(65535), 16);
+  }
+
   // This is the test for various graphs utilities.
   {
     Graph g;
@@ -148,11 +188,11 @@ main()
     for(int n = 3; n < 50; ++n)
       {
         int e = n * (n - 1) / 2;
-        EXPECT(generate_graph(g, n, e - 1, gen), e - 1);
+        EXPECT(generate_random_graph(g, n, e - 1, gen), e - 1);
         TEST(check_components(g));
-        EXPECT(generate_graph(g, n, e, gen), e);
+        EXPECT(generate_random_graph(g, n, e, gen), e);
         TEST(check_components(g));
-        EXPECT(generate_graph(g, n, e + 1, gen), e);
+        EXPECT(generate_random_graph(g, n, e + 1, gen), e);
         TEST(check_components(g));
       }
   }
@@ -173,6 +213,12 @@ main()
     EXPECT(i->size(), 2);
     ++i;
     EXPECT(i->size(), 1);
+  }
+
+  // Test the Benes network of various sizes.
+  {
+    for (int i = 32; i != 1; i >>= 1)
+      test_benes_network(i);
   }
 
   return 0;

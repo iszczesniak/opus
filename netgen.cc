@@ -21,7 +21,13 @@ int main(int argc, char* argv[])
   // are chosen randomly, but they are not the same.  No parallel
   // edges are allowed.
   Graph g;
-  generate_graph(g, args.nr_nodes, args.nr_edges, gen);
+
+  if (args.gt == netgen_args::random)
+    generate_random_graph(g, args.nr_nodes, args.nr_edges, gen);
+  else
+    generate_benes_graph(g, args.nr_nodes);
+
+  // Make sure there are no parallel links.
   assert(test_parallel(g));
 
   // Name the vertices.
