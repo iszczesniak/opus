@@ -59,8 +59,8 @@ main (int argc, char* argv[])
   else
     tie(ppm, ptm) = sim_solution(g, tm, args.HL, args.DL, cerr);
 
-  // Save the final ptm.
-  s(ptm);
+  // Save the final ppm and ptm.
+  s(ppm, ptm);
 
   return 0;
 }

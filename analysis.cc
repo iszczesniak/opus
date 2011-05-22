@@ -132,7 +132,7 @@ ana_solution(const Graph &g, const fp_matrix &tm,
       os << "Iteration #" << iter << ": " << endl;
       tie(ppm, ptm) = ana_iteration(g, tm, HL, ptm_list, os);
 
-      s(ptm, iter);
+      s(ppm, ptm, iter);
 
       if (ppm_list.size() == AL)
         ppm_list.pop_front();

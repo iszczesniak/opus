@@ -15,8 +15,8 @@ class serializer
 public:
   serializer(const arguments &args, const Graph &g, const fp_matrix &tm);
 
-  void operator()(const pt_matrix &ptm) const;
-  void operator()(const pt_matrix &ptm, int iteration) const;
+  void operator()(const pp_matrix &ppm, const pt_matrix &ptm) const;
+  void operator()(const pp_matrix &ppm, const pt_matrix &ptm, int iteration) const;
 };
 
 #endif /* SERIALIZER_HPP */

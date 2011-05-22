@@ -12,7 +12,7 @@ serializer::serializer(const arguments &args,
 }
 
 void
-serializer::operator()(const pt_matrix &ptm) const
+serializer::operator()(const pp_matrix &ppm, const pt_matrix &ptm) const
 {
   if (!args.output_filename.empty())
     {
@@ -22,12 +22,13 @@ serializer::operator()(const pt_matrix &ptm) const
       oa << args;
       oa << g;
       oa << tm;
+      oa << ppm;
       oa << ptm;
     }
 }
 
 void
-serializer::operator()(const pt_matrix &ptm, int iter) const
+serializer::operator()(const pp_matrix &ppm, const pt_matrix &ptm, int iter) const
 {
   if (!args.output_filename.empty())
     {
@@ -44,6 +45,7 @@ serializer::operator()(const pt_matrix &ptm, int iter) const
           oa << args;
           oa << g;
           oa << tm;
+          oa << ppm;
           oa << ptm;
         }
     }

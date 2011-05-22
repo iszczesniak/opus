@@ -131,6 +131,7 @@ int main(int argc, char* argv[])
   arguments a;
   Graph g;
   fp_matrix tm;
+  pp_matrix ppm;
   pt_matrix ptm;
 
   ifstream ifs(ifn);
@@ -146,6 +147,7 @@ int main(int argc, char* argv[])
   ia >> g;
   p_graph = &g;
   ia >> tm;
+  ia >> ppm;
   ia >> ptm;
 
   if (args.show_others)
