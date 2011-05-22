@@ -1,6 +1,6 @@
 TARGETS = \
+benes16.A benes16.S \
 pionier.A pionier.S \
-random.A random.S \
 six_node_net.A six_node_net.S
 
 all: $(TARGETS)
