@@ -68,8 +68,8 @@ check_ll(const map<Edge, double> &ll, const Graph &g, ostream &os,
 }
 
 void
-check_plp(const pt_matrix &ptm, const fp_matrix &tm, const Graph &g,
-          ostream &os, const show_args &args)
+check_plp(const pp_matrix &ppm, const pt_matrix &ptm, const fp_matrix &tm,
+	  const Graph &g, ostream &os, const show_args &args)
 {
   accumulator_set<double, stats<tag::mean, tag::variance> > acc_plp;
 
@@ -77,10 +77,9 @@ check_plp(const pt_matrix &ptm, const fp_matrix &tm, const Graph &g,
   // for the packet which started at node j and that goes to node i.
   FOREACH_MATRIX_ELEMENT(ptm, i, j, e, pt_matrix)
     {
-      // Make sure that the rate of the demand is in the traffic
-      // matrix.
-      assert(tm.exists(i, j));
-      double in_rate = tm.at(i, j);
+      // Make sure the demand is present in the ppm.
+      assert(ppm.exists(i, j));
+      double in_rate = ::sum(ppm.at(i, j)[0][j]).mean();
       double out_rate = 0;
       
       // Iterate over the hops of a trajectory.
@@ -100,6 +99,9 @@ check_plp(const pt_matrix &ptm, const fp_matrix &tm, const Graph &g,
               // the Boost.accumulators, but it's not what we want.
               out_rate += ::sum(l->second).mean();
           }
+
+      cout << "in rate = " << in_rate << ", "
+	   << "out rate = " << out_rate << endl;
 
       double plp = (in_rate - out_rate) / in_rate;
       acc_plp(plp);
@@ -163,7 +165,7 @@ int main(int argc, char* argv[])
     print_ptm(ptm, g, cout);
 
   check_ll(ll, g, cout, args);
-  check_plp(ptm, tm, g, cout, args);
+  check_plp(ppm, ptm, tm, g, cout, args);
 
   return 0;
 }
