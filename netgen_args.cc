@@ -55,9 +55,8 @@ process_netgen_args(int argc, char *argv[])
 {
   netgen_args result;
 
-  // The maps of strings to enum values.
-  typedef map<string, netgen_args::graph_type> gtm_type;
-  gtm_type gtm;
+  // The map of strings to enum values.
+  map<string, netgen_args::graph_type> gtm;
   gtm["random"] = netgen_args::random;
   gtm["benes"] = netgen_args::benes;
 
@@ -101,19 +100,12 @@ process_netgen_args(int argc, char *argv[])
         result.nr_edges = make_pair(true, vm["edges"].as<int>());
 
       // The string describing the network type.
-      string type = vm["type"].as<string>();
-
-      if (gtm.find(type) == gtm.end())
+      if (vm.count("type"))
 	{
-          cerr << "The graph type is invalid.  Use one of:\n";
-
-	  BOOST_FOREACH(const gtm_type::value_type &p, gtm)
-	    cerr << p.first << endl;
-
-	  exit(1);
+	  netgen_args::graph_type t;
+	  t = string_to_enum(vm["type"].as<string>(), gtm);
+	  result.gt = make_pair(true, t);
 	}
-      else
-	result.gt = make_pair(true, gtm[type]);
 
       // The seed for the random number generator.
       result.seed = make_pair(true, vm["seed"].as<int>());

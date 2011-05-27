@@ -361,4 +361,28 @@ pop_count(T number)
   return count;
 }
 
+/**
+ * Convert a string to an enum according to the given map.
+ */
+template<typename T>
+T
+string_to_enum(const std::string &str, const std::map<std::string, T> &m)
+{
+  // String to enum map type.
+  typedef std::map<std::string, T> stem;
+  typename stem::const_iterator i = m.find(str); 
+
+  if (i == m.end())
+    {
+      std::cerr << "String " << str << " is invalid.  Use one of:\n";
+
+      for(typename stem::const_iterator i = m.begin(); i != m.end(); ++i)
+	std::cerr << i->first << std::endl;
+
+      exit(1);
+    }
+
+  return i->second;
+}
+
 #endif /* UTILS_HPP */
