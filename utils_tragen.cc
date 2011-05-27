@@ -10,6 +10,20 @@ using namespace std;
 using namespace boost::random;
 
 void
+generate_tm(const Graph &g, fp_matrix &tm, const tragen_args &args)
+{
+  if (!args.nlimit.first)
+    generate_tm(g, tm, args.nr_demands, args.poisson_mean);
+  else
+    {
+      set<Vertex> s;
+      for(int i = 0; i < args.nlimit.second; ++i)
+	s.insert(i);
+      generate_tm(g, tm, args.nr_demands, args.poisson_mean, s);
+    }
+}
+
+void
 generate_tm(const Graph &g, fp_matrix &tm, int demands, double poisson_mean)
 {
   assert(check_components(g));
