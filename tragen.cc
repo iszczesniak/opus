@@ -15,11 +15,11 @@ int main(int argc, char* argv[])
   tragen_args args = process_tragen_args(argc, argv);
 
   minstd_rand gen;
-  gen.seed(args.seed);
+  gen.seed(args.seed.second);
 
   // Here we create the graph.
   Graph g;
-  if (!read_graphviz_filename(args.input_filename.c_str(), g))
+  if (!read_graphviz_filename(args.input_filename.second.c_str(), g))
     {
       cerr << "Error loading the graphviz file.\n";
       return 1;

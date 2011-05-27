@@ -5,6 +5,31 @@
 using namespace std;
 namespace po = boost::program_options;
 
+void
+check(const tragen_args &args)
+{
+  if (!args.input_filename.first)
+    {
+      cerr << "You need to give me the input "
+	   << "file name.\n";
+      exit(1);
+    }
+
+  if (!args.poisson_mean.first)
+    {
+      cerr << "You need to give me the mean of "
+	   << "the Poisson distribution.\n";
+      exit(1);
+    }
+
+  if (!args.nr_demands.first)
+    {
+      cerr << "You need to give me the number "
+	   << "of demands to generate.\n";
+      exit(1);
+    }
+}
+
 tragen_args
 process_tragen_args(int argc, char *argv[])
 {
@@ -45,31 +70,13 @@ process_tragen_args(int argc, char *argv[])
         }
 
       if(vm.count("demands"))
-        result.nr_demands = vm["demands"].as<int>();
-      else
-        {
-          cerr << "You need to give me the number "
-               << "of demands to generate.\n";
-          exit(1);
-        }
+        result.nr_demands = make_pair(true, vm["demands"].as<int>());
 
       if(vm.count("poisson"))
-        result.poisson_mean = vm["poisson"].as<double>();
-      else
-        {
-          cerr << "You need to give me the mean of "
-               << "the Poisson distribution.\n";
-          exit(1);
-        }
+        result.poisson_mean = make_pair(true, vm["poisson"].as<double>());
 
       if(vm.count("input"))
-        result.input_filename = vm["input"].as<string>();
-      else
-        {
-          cerr << "You need to give me the input "
-               << "file name.\n";
-          exit(1);
-        }
+        result.input_filename = make_pair(true, vm["input"].as<string>());
 
       if(vm.count("output"))
         result.output_filename = make_pair(true, vm["output"].as<string>());
@@ -78,7 +85,10 @@ process_tragen_args(int argc, char *argv[])
         result.nlimit = make_pair(true, vm["nlimit"].as<int>());
 
       // The seed for the random number generator.
-      result.seed = vm["seed"].as<int>();
+      if(vm.count("seed"))
+	result.seed = make_pair(true, vm["seed"].as<int>());
+
+      check(result);
     }
   catch(const std::exception& e)
     {
