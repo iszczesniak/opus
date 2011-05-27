@@ -107,14 +107,14 @@ process_netgen_args(int argc, char *argv[])
 	{
           cerr << "The graph type is invalid.  Use one of:\n";
 
-	  BOOST_FOREACH(const gtm_type::value_type& p, gtm)
+	  BOOST_FOREACH(const gtm_type::value_type &p, gtm)
 	    cerr << p.first << endl;
 
 	  exit(1);
 	}
       else
 	result.gt = make_pair(true, gtm[type]);
-	  
+
       // The seed for the random number generator.
       result.seed = make_pair(true, vm["seed"].as<int>());
 
@@ -124,7 +124,7 @@ process_netgen_args(int argc, char *argv[])
 
       check(result);
     }
-  catch(const std::exception& e)
+  catch(const std::exception &e)
     {
       cerr << e.what() << std::endl;
       exit(1);
