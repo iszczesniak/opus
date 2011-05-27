@@ -72,13 +72,7 @@ process_tragen_args(int argc, char *argv[])
         }
 
       if(vm.count("output"))
-        result.output_filename = vm["output"].as<string>();
-      else
-        {
-          cerr << "You need to give me the output "
-               << "file name.\n";
-          exit(1);
-        }
+        result.output_filename = make_pair(true, vm["output"].as<string>());
 
       if(vm.count("nlimit"))
         result.nlimit = make_pair(true, vm["nlimit"].as<int>());

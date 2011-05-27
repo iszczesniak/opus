@@ -15,7 +15,7 @@ struct tragen_args
   string input_filename;
 
   /// The name of the output traffic matrix file.
-  string output_filename;
+  pair<bool, string> output_filename;
 
   /// The number of demands to generate.
   int nr_demands;

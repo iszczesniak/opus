@@ -28,9 +28,14 @@ int main(int argc, char* argv[])
   // The traffic matrix.
   fp_matrix tm;
   generate_tm(g, tm, args);
-  ofstream tm_file(args.output_filename.c_str());
-  print_tm(g, tm, tm_file);
-  tm_file.close();
+
+  if (args.output_filename.first)
+    {
+      ofstream file(args.output_filename.second.c_str());
+      print_tm(g, tm, file);
+    }
+  else
+    print_tm(g, tm, cout);
 
   return 0;
 }
