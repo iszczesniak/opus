@@ -13,27 +13,36 @@ void
 generate_tm(const Graph &g, fp_matrix &tm, const tragen_args &args)
 {
   if (!args.nlimit.first)
-    generate_tm(g, tm, args.nr_demands.second, args.poisson_mean.second);
+    generate_random_tm(g, tm, args.nr_demands.second,
+		       args.poisson_mean.second);
   else
-    {
-      set<Vertex> s;
-      for(int i = 0; i < args.nlimit.second; ++i)
-	s.insert(i);
-      generate_tm(g, tm, args.nr_demands.second, args.poisson_mean.second, s);
-    }
+    generate_random_tm(g, tm, args.nr_demands.second,
+		       args.poisson_mean.second,
+		       args.nlimit.second);
 }
 
 void
-generate_tm(const Graph &g, fp_matrix &tm, int demands, double poisson_mean)
+generate_random_tm(const Graph &g, fp_matrix &tm, int demands,
+		   double poisson_mean)
 {
   assert(check_components(g));
   set<Vertex> s = *get_components(g).begin();
-  generate_tm(g, tm, demands, poisson_mean, s);
+  generate_random_tm(g, tm, demands, poisson_mean, s);
 }
 
 void
-generate_tm(const Graph &g, fp_matrix &tm, int demands, double poisson_mean,
-	    set<Vertex> s)
+generate_random_tm(const Graph &g, fp_matrix &tm, int demands,
+		   double poisson_mean, int n)
+{
+  set<Vertex> s;
+  for(int i = 0; i < n; ++i)
+    s.insert(i);
+  generate_random_tm(g, tm, demands, poisson_mean, s);
+}
+
+void
+generate_random_tm(const Graph &g, fp_matrix &tm, int demands,
+		   double poisson_mean, set<Vertex> s)
 {
   minstd_rand gen;
 
