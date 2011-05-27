@@ -1,4 +1,5 @@
 #include "tragen_args.hpp"
+#include "utils.hpp"
 #include <iostream>
 #include <boost/program_options.hpp>
 
@@ -22,11 +23,15 @@ check(const tragen_args &args)
       exit(1);
     }
 
-  if (!args.nr_demands.first)
+  // Conditions for the random traffic.
+  if (args.tt.second == tragen_args::random)
     {
-      cerr << "You need to give me the number "
-	   << "of demands to generate.\n";
-      exit(1);
+      if (!args.nr_demands.first)
+	{
+	  cerr << "You need to give me the number "
+	       << "of demands to generate.\n";
+	  exit(1);
+	}
     }
 }
 
@@ -34,6 +39,11 @@ tragen_args
 process_tragen_args(int argc, char *argv[])
 {
   tragen_args result;
+
+  // The map of strings to enum values.
+  map<string, tragen_args::traffic_type> ttm;
+  ttm["random"] = tragen_args::random;
+  ttm["uniform"] = tragen_args::uniform;
 
   try
     {
@@ -57,7 +67,10 @@ process_tragen_args(int argc, char *argv[])
          "the seed of the random number generator")
 
         ("nlimit,n", po::value<int>(),
-         "the number of first nodes for which to generate traffic");
+         "the number of first nodes for which to generate traffic")
+
+        ("type,t", po::value<string>()->default_value("random"),
+         "the traffic type");
 
       po::variables_map vm;
       po::store(po::command_line_parser(argc, argv).options(opts).run(), vm);
@@ -87,6 +100,14 @@ process_tragen_args(int argc, char *argv[])
       // The seed for the random number generator.
       if(vm.count("seed"))
 	result.seed = make_pair(true, vm["seed"].as<int>());
+
+      // The traffic type.
+      if (vm.count("type"))
+        {
+          tragen_args::traffic_type t;
+          t = string_to_enum(vm["type"].as<string>(), ttm);
+          result.tt = make_pair(true, t);
+        }
 
       check(result);
     }

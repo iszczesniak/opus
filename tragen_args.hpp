@@ -11,6 +11,9 @@ using namespace std;
  */
 struct tragen_args
 {
+  /// Type of traffic.
+  enum traffic_type {random, uniform};
+
   /// The name of the input graph file.
   pair<bool, string> input_filename;
 
@@ -28,6 +31,9 @@ struct tragen_args
 
   /// The number of first nodes for which to generate the traffic.
   pair<bool, int> nlimit;
+
+  /// The type of traffic.
+  pair<bool, traffic_type> tt;
 };
 
 /**
