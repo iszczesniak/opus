@@ -34,6 +34,15 @@ struct show_args
 
   /// Show the packet loss probability standard deviation.
   bool plp_sdev;
+
+  /// Show the network throughput.
+  bool nth;
+
+  /// Show the demand throughput mean.
+  bool dth_mean;
+
+  /// Show the demand throughput standard deviation.
+  bool dth_sdev;
 };
 
 /**

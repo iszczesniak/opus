@@ -30,6 +30,12 @@ process_show_args(int argc, char *argv[])
 
         ("plp-sdev", "show the packet loss probability standard deviation")
 
+        ("nth", "show the network throughput")
+
+        ("dth-mean", "show the demand throughput mean")
+
+        ("dth-sdev", "show the demand throughput standard deviation")
+
         ("file-name", po::value<string>(), "input file");
 
       po::positional_options_description p;
@@ -61,6 +67,11 @@ process_show_args(int argc, char *argv[])
       any |= result.plp_mean = vm.count("plp-mean");
       any |= result.plp_sdev = vm.count("plp-sdev");
 
+      // Throughput
+      any |= result.nth = vm.count("nth");
+      any |= result.dth_mean = vm.count("dth-mean");
+      any |= result.dth_sdev = vm.count("dth-sdev");
+
       // Don't show others is any above was selected.
       result.show_others = !any;
 
@@ -73,7 +84,10 @@ process_show_args(int argc, char *argv[])
           result.load_sdev = true;
           result.plp_mean = true;
           result.plp_sdev = true;
-	}
+	      result.nth = true;
+	      result.dth_mean = true;
+	      result.dth_sdev = true;
+         }
 
       if (vm.count("file-name"))
         result.file_name = vm["file-name"].as<string>();

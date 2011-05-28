@@ -100,9 +100,6 @@ check_plp(const pp_matrix &ppm, const pt_matrix &ptm, const fp_matrix &tm,
               out_rate += ::sum(l->second).mean();
           }
 
-      cout << "in rate = " << in_rate << ", "
-	   << "out rate = " << out_rate << endl;
-
       double plp = (in_rate - out_rate) / in_rate;
       acc_plp(plp);
     }
@@ -116,6 +113,61 @@ check_plp(const pp_matrix &ppm, const pt_matrix &ptm, const fp_matrix &tm,
     os << "With the standard deviation of: ";
   if (args.plp_sdev)
     os << sqrt(accumulators::variance(acc_plp)) << std::endl;
+}
+
+void
+check_thr(const pt_matrix &ptm, const Graph &g, ostream &os,
+	  const show_args &args)
+{
+  double network_throughput = 0;
+
+  accumulator_set<double, stats<tag::mean, tag::variance> > acc_thr;
+
+  // Iterate over all demands.  The element e is the packet trajectory
+  // for the packet which started at node j and that goes to node i.
+  FOREACH_MATRIX_ELEMENT(ptm, i, j, e, pt_matrix)
+    {
+      double out_rate = 0;
+
+      // Iterate over the hops of a trajectory.
+      for(packet_trajectory::const_iterator t = e.begin();
+          t != e.end(); ++t)
+        // Iterate over the links of the hop.  Iterator l points to a
+        // pair of <Edge, dist_poly>.
+        for(packet_trajectory::mapped_type::const_iterator
+              l = t->second.begin(); l != t->second.end(); ++l)
+          {
+            // The node where the packet arrives along this link.
+            Vertex ld = target(l->first, g);
+
+            if (ld == i)
+	      {
+		// The sum function is our function defined in the
+		// global name space.  There is also the sum function in
+		// the Boost.accumulators, but it's not what we want.
+		double rate = ::sum(l->second).mean();
+		network_throughput += rate;
+		out_rate += rate;
+	      }
+          }
+
+      acc_thr(out_rate);
+    }
+
+  if (args.show_others)
+    os << "Network throughput: ";
+  if (args.nth)
+    os << network_throughput << std::endl;
+
+  if (args.show_others)
+    os << "Demand throughput mean: ";
+  if (args.dth_mean)
+    os << mean(acc_thr) << std::endl;
+
+  if (args.show_others)
+    os << "With the standard deviation of: ";
+  if (args.dth_sdev)
+    os << sqrt(accumulators::variance(acc_thr)) << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -166,6 +218,7 @@ int main(int argc, char* argv[])
 
   check_ll(ll, g, cout, args);
   check_plp(ppm, ptm, tm, g, cout, args);
+  check_thr(ptm, g, cout, args);
 
   return 0;
 }
