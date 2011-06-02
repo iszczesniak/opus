@@ -61,7 +61,7 @@ process_packets(const Graph &g, Vertex j, timeslot ts,
   // Keeps the number of packets that traversed links leaving node j.
   ptc_matrix ptcm;
 
-  // These are packets that will be processed in this timeslot.
+  // These are packets that will be processed in this time slot.
   waiting_pkts to_route;
 
   // Here we find the packets, which arrived from neighbor nodes.

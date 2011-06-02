@@ -95,13 +95,13 @@ struct packet
   Vertex dst;
 
   /**
-   * The start timeslot: the timeslot a packet was admitted into the
+   * The start time slot: the time slot a packet was admitted into the
    * network.
    */
   timeslot start_ts;
 
   /**
-   * The next timeslot: the timeslot at which the packet arrives at
+   * The next time slot: the time slot at which the packet arrives at
    * the next node.  The next node can be both an intermediate node or
    * the destination node.
    */
