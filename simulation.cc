@@ -14,7 +14,11 @@
 
 #include <boost/progress.hpp>
 
+/// The limit on the number of slots in a simulation.
 #define TS_LIMIT 100000
+
+/// The local add limit.
+#define LA_LIMIT 1000
 
 using namespace std;
 
@@ -53,6 +57,13 @@ sim_solution(const Graph &g, const fp_matrix &tm, int HL, int DL,
 
   progress_display progress(TS_LIMIT, os);
 
+  // These are the local packets that ask for admission.
+  vector<waiting_pkts> local_adds;
+
+  // These are the packets for which this packet is the
+  // destination.
+  vector<waiting_pkts> local_drops;
+
   // In every iteration of this loop we simulate the behaviour of the
   // network for this specific timeslot ts.
   for (timeslot ts = 0; ts < TS_LIMIT; ts++)
@@ -63,11 +74,11 @@ sim_solution(const Graph &g, const fp_matrix &tm, int HL, int DL,
       BGL_FORALL_VERTICES(j, g, Graph)
         {
           // These are the local packets that ask for admission.
-          waiting_pkts local_add;
+          waiting_pkts &local_add = local_adds[j];
 
           // These are the packets for which this packet is the
           // destination.
-          waiting_pkts local_drop;
+          waiting_pkts &local_drop = local_drops[j];
 
           // We generate the local packets that ask for admission.  We
           // randomly choose them, and repeat this process for all the
@@ -79,9 +90,26 @@ sim_solution(const Graph &g, const fp_matrix &tm, int HL, int DL,
           process_packets(g, j, ts, pqv, local_add, local_drop,
                           ppcmm, ptcmm, HL, DL);
 
-          // Here we process the packets that asked for admission, but
-          // were jilted.  We simply delete them.
-          delete_waiting_pkts(local_add);
+          // Here we process the packets left in the loca_add queue.
+          // We have to remove the excess, becuase otherwise we would
+          // run out of memory.
+	  if (local_add.size() > LA_LIMIT)
+	    {
+	      waiting_pkts local_add_excess;
+
+	      while(local_add.size() > LA_LIMIT)
+		{
+		  // We remove the packets from the end, i.e. with the
+		  // largest time slot number, which corresponds to
+		  // the packets that arrived most recently.
+		  waiting_pkts::iterator l = local_add.end();
+		  --l;
+		  local_add_excess.insert(*l);
+		  local_add.erase(*l);
+		}
+
+	      delete_waiting_pkts(local_add_excess);
+	    }
 
           // Here we process the packets that are arriving at the
           // destination, i.e. packets that we find in local_drop.
