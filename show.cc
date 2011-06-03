@@ -214,7 +214,10 @@ int main(int argc, char* argv[])
     print_ll(ll, g, cout);
 
   if (args.show_others)
-    print_ptm(ptm, g, cout);
+    {
+      print_ppm(ppm, g, cout);
+      print_ptm(ptm, g, cout);
+    }
 
   check_ll(ll, g, cout, args);
   check_plp(ppm, ptm, tm, g, cout, args);
