@@ -12,6 +12,7 @@
 #include <set>
 #include <vector>
 
+#include <boost/foreach.hpp>
 #include <boost/progress.hpp>
 
 /// The limit on the number of slots in a simulation.
@@ -110,6 +111,11 @@ sim_solution(const Graph &g, const fp_matrix &tm, int HL, int DL,
 
 	      delete_waiting_pkts(local_add_excess);
 	    }
+
+	  // Iterate over the remaining packets in the local_add, and
+	  // "schedule" them for the next time slot.
+	  BOOST_FOREACH(struct packet *pkt, local_add)
+	    ++(pkt->next_ts);
 
           // Here we process the packets that are arriving at the
           // destination, i.e. packets that we find in local_drop.

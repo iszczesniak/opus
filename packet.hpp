@@ -95,8 +95,7 @@ struct packet
   Vertex dst;
 
   /**
-   * The start time slot: the time slot a packet was admitted into the
-   * network.
+   * The start time slot: the time slot a packet was created.
    */
   timeslot start_ts;
 
