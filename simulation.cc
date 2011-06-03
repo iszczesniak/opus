@@ -58,11 +58,11 @@ sim_solution(const Graph &g, const fp_matrix &tm, int HL, int DL,
   progress_display progress(TS_LIMIT, os);
 
   // These are the local packets that ask for admission.
-  vector<waiting_pkts> local_adds;
+  map<Vertex, waiting_pkts> local_adds;
 
   // These are the packets for which this packet is the
   // destination.
-  vector<waiting_pkts> local_drops;
+  map<Vertex, waiting_pkts> local_drops;
 
   // In every iteration of this loop we simulate the behaviour of the
   // network for this specific timeslot ts.
