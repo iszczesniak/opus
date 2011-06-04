@@ -3,6 +3,7 @@
 #include "graph.hpp"
 #include "graph_serialization.hpp"
 #include "matrixes.hpp"
+#include "polynomial.hpp"
 #include "utils.hpp"
 #include "utils_ana.hpp"
 
@@ -11,12 +12,14 @@
 #include <fstream>
 #include <set>
 
+#include <boost/foreach.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
 #include <boost/accumulators/statistics/mean.hpp>
+#include <boost/accumulators/statistics/weighted_mean.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
 
 using namespace boost::accumulators;
@@ -170,6 +173,42 @@ check_thr(const pt_matrix &ptm, const Graph &g, ostream &os,
     os << sqrt(accumulators::variance(acc_thr)) << std::endl;
 }
 
+void
+check_dad(const pp_matrix &ppm, const Graph &g, ostream &os,
+	  const show_args &args)
+{
+  accumulator_set<double, stats<tag::mean, tag::variance> > acc_dad;
+
+  // Iterate over every demand and check the admission properties of
+  // the demand.  The element e is the packet trajectory for the
+  // packet which started at node j and that goes to node i.
+  FOREACH_MATRIX_ELEMENT(ppm, i, j, e, pp_matrix)
+    {
+      packet_presence::const_iterator e0 = e.find(0);
+      assert(e0 != e.end());
+      map<Vertex, dist_poly>::const_iterator e0j = e0->second.find(j);
+      assert(e0j != e0->second.end());
+      const dist_poly &dp = e0j->second;
+
+      accumulator_set<double, stats<tag::weighted_mean>, double> acc_mean;
+      BOOST_FOREACH(const dist_poly::value_type &v, dp)
+	acc_mean(v.first, weight = v.second.mean());
+
+      double m = mean(acc_mean);
+      acc_dad(m);
+    }
+
+  if (args.show_others)
+    os << "Mean of the demand admission time: ";
+  if (args.dad_mean)
+    os << mean(acc_dad) << std::endl;
+
+  if (args.show_others)
+    os << "With the standard deviation of: ";
+  if (args.dad_sdev)
+    os << sqrt(accumulators::variance(acc_dad)) << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
   show_args args = process_show_args(argc, argv);
@@ -222,6 +261,7 @@ int main(int argc, char* argv[])
   check_ll(ll, g, cout, args);
   check_plp(ppm, ptm, tm, g, cout, args);
   check_thr(ptm, g, cout, args);
+  check_dad(ppm, g, cout, args);
 
   return 0;
 }

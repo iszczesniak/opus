@@ -36,6 +36,10 @@ process_show_args(int argc, char *argv[])
 
         ("dth-sdev", "show the demand throughput standard deviation")
 
+        ("dad-mean", "show the mean of the demand admission time")
+
+        ("dad-sdev", "show the standard deviation of the demand admission time")
+
         ("file-name", po::value<string>(), "input file");
 
       po::positional_options_description p;
@@ -72,6 +76,10 @@ process_show_args(int argc, char *argv[])
       any |= result.dth_mean = vm.count("dth-mean");
       any |= result.dth_sdev = vm.count("dth-sdev");
 
+      // Demand admission time
+      any |= result.dad_mean = vm.count("dad-mean");
+      any |= result.dad_sdev = vm.count("dad-sdev");
+
       // Don't show others is any above was selected.
       result.show_others = !any;
 
@@ -84,9 +92,11 @@ process_show_args(int argc, char *argv[])
           result.load_sdev = true;
           result.plp_mean = true;
           result.plp_sdev = true;
-	      result.nth = true;
-	      result.dth_mean = true;
-	      result.dth_sdev = true;
+	  result.nth = true;
+	  result.dth_mean = true;
+	  result.dth_sdev = true;
+	  result.dad_mean = true;
+	  result.dad_sdev = true;
          }
 
       if (vm.count("file-name"))

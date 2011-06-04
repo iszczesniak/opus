@@ -19,7 +19,7 @@
 #define TS_LIMIT 100000
 
 /// The local add limit.
-#define LA_LIMIT 1000
+#define LA_LIMIT 10
 
 using namespace std;
 

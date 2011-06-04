@@ -43,6 +43,12 @@ struct show_args
 
   /// Show the demand throughput standard deviation.
   bool dth_sdev;
+
+  /// Show the mean of the demand admission time.
+  bool dad_mean;
+
+  /// Show the standard deviation of the demand admission time.
+  bool dad_sdev;
 };
 
 /**
