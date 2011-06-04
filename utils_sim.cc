@@ -47,7 +47,7 @@ report_packet_transition(Edge e, const packet &pkt, ptc_matrix &ptcm)
 void
 process_packets(const Graph &g, Vertex j, timeslot ts,
                 map<Vertex, waiting_pkts> &pqv,
-                waiting_pkts &local_add, waiting_pkts &local_drop,
+                list<packet *> &local_add, list<packet *> &local_drop,
                 ppcm_matrix &ppcmm, ptcm_matrix &ptcmm,
                 int HL, int DL)
 {
@@ -89,7 +89,7 @@ process_packets(const Graph &g, Vertex j, timeslot ts,
         {
           // This packet is destined to this node, so add it to
           // local_drop and remove it from to_route.
-          local_drop.insert(*l);
+          local_drop.push_back(*l);
           to_route.erase(l);
         }
     }
@@ -106,10 +106,25 @@ process_packets(const Graph &g, Vertex j, timeslot ts,
   // as we can.
   while(!local_add.empty() && to_route.size() < v)
     {
-      waiting_pkts::iterator k = local_add.begin();
-      advance(k, myrand(local_add.size()));
+      list<packet *>::iterator k = local_add.begin();
 
-      // We report the newly admitted packets.
+      // Count the number of packets with the same next_ts as the
+      // packet at the front.
+      int count = 0;
+      for(list<packet *>::iterator i = k; i != local_add.end(); ++i)
+	if ((*i)->next_ts == (*k)->next_ts)
+	  ++count;
+	else
+	  break;
+
+      // Chose at random the packet from local_add, but only from
+      // those that have the same next_ts.
+      advance(k, myrand(count));
+
+      // We report the newly admitted packets, but to do this we need
+      // to fix the next_ts.  We do this, because this is the time
+      // slot the packet arrived to its next place.
+      (*k)->next_ts = ts;
       report_packet_presence(j, **k, ppcm);
 
       to_route.insert(*k);
@@ -223,18 +238,18 @@ calc_nr_in_transit(const map<Vertex, waiting_pkts> &pqv,
 }
 
 void
-delete_waiting_pkts(waiting_pkts &wp)
+delete_pkts(list<packet *> &wp)
 {
   while(!wp.empty())
     {
-      waiting_pkts::iterator i = wp.begin();
+      list<packet *>::iterator i = wp.begin();
       delete *i;
       wp.erase(i);
     }
 }
 
 void
-fill_local_add(waiting_pkts &local_add, Vertex j, Vertex i,
+fill_local_add(list<packet *> &local_add, int limit, Vertex j, Vertex i,
                timeslot ts, const fp_matrix &tm, gsl_rng *rng)
 {
   if (tm.exists(i, j))
@@ -250,10 +265,10 @@ fill_local_add(waiting_pkts &local_add, Vertex j, Vertex i,
       int number = gsl_ran_poisson(rng, rate);
 
       // Here we add these packets to the local_add queue.
-      while(number--)
+      while(number-- && local_add.size() < limit)
         {
           packet *pkt = new packet(j, i, ts);
-          local_add.insert(pkt);
+          local_add.push_back(pkt);
         }
     }
 }

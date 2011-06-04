@@ -59,11 +59,11 @@ sim_solution(const Graph &g, const fp_matrix &tm, int HL, int DL,
   progress_display progress(TS_LIMIT, os);
 
   // These are the local packets that ask for admission.
-  map<Vertex, waiting_pkts> local_adds;
+  map<Vertex, list<packet *> > local_adds;
 
   // These are the packets for which this packet is the
   // destination.
-  map<Vertex, waiting_pkts> local_drops;
+  map<Vertex, list<packet *> > local_drops;
 
   // In every iteration of this loop we simulate the behaviour of the
   // network for this specific timeslot ts.
@@ -75,51 +75,25 @@ sim_solution(const Graph &g, const fp_matrix &tm, int HL, int DL,
       BGL_FORALL_VERTICES(j, g, Graph)
         {
           // These are the local packets that ask for admission.
-          waiting_pkts &local_add = local_adds[j];
+          list<packet *> &local_add = local_adds[j];
 
           // These are the packets for which this packet is the
           // destination.
-          waiting_pkts &local_drop = local_drops[j];
+          list<packet *> &local_drop = local_drops[j];
 
           // We generate the local packets that ask for admission.  We
           // randomly choose them, and repeat this process for all the
           // destination nodes i.
           BGL_FORALL_VERTICES(i, g, Graph)
-            fill_local_add(local_add, j, i, ts, tm, rng);
+            fill_local_add(local_add, LA_LIMIT, j, i, ts, tm, rng);
 
           // This function does all the packet processing.
           process_packets(g, j, ts, pqv, local_add, local_drop,
                           ppcmm, ptcmm, HL, DL);
 
-          // Here we process the packets left in the loca_add queue.
-          // We have to remove the excess, becuase otherwise we would
-          // run out of memory.
-	  if (local_add.size() > LA_LIMIT)
-	    {
-	      waiting_pkts local_add_excess;
-
-	      while(local_add.size() > LA_LIMIT)
-		{
-		  // We remove the packets from the end, i.e. with the
-		  // largest time slot number, which corresponds to
-		  // the packets that arrived most recently.
-		  waiting_pkts::iterator l = local_add.end();
-		  --l;
-		  local_add_excess.insert(*l);
-		  local_add.erase(*l);
-		}
-
-	      delete_waiting_pkts(local_add_excess);
-	    }
-
-	  // Iterate over the remaining packets in the local_add, and
-	  // "schedule" them for the next time slot.
-	  BOOST_FOREACH(struct packet *pkt, local_add)
-	    ++(pkt->next_ts);
-
           // Here we process the packets that are arriving at the
           // destination, i.e. packets that we find in local_drop.
-          delete_waiting_pkts(local_drop);
+          delete_pkts(local_drop);
         }
 
       ++progress;

@@ -37,7 +37,7 @@ report_packet_transition(Edge e, const packet &pkt, ptc_matrix &ptcm);
 void
 process_packets(const Graph &g, Vertex j, timeslot ts,
                 map<Vertex, waiting_pkts> &pqv,
-                waiting_pkts &local_add, waiting_pkts &local_drop,
+                list<packet *> &local_add, list<packet *> &local_drop,
                 ppcm_matrix &ppcmm, ptcm_matrix &ptcmm,
                 int HL, int DL);
 
@@ -64,7 +64,7 @@ calc_nr_in_transit(const map<Vertex, waiting_pkts> &pqv,
  * @param wp the structure with packets to delete
  */
 void
-delete_waiting_pkts(waiting_pkts &wp);
+delete_pkts(list<packet *> &wp);
 
 /**
  * Put the packets into the local_add queue.
@@ -82,7 +82,7 @@ delete_waiting_pkts(waiting_pkts &wp);
  * @param rng the random number generator
  */
 void
-fill_local_add(waiting_pkts &local_add, Vertex j, Vertex i,
+fill_local_add(list<packet *> &local_add, int limit, Vertex j, Vertex i,
 	       timeslot ts, const fp_matrix &tm, gsl_rng *rng);
 
 /**
