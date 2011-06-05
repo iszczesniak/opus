@@ -209,6 +209,46 @@ check_dad(const pp_matrix &ppm, const Graph &g, ostream &os,
     os << sqrt(accumulators::variance(acc_dad)) << std::endl;
 }
 
+void
+check_dtd(const pp_matrix &ppm, const Graph &g, ostream &os,
+	  const show_args &args)
+{
+  accumulator_set<double, stats<tag::mean, tag::variance> > acc_dtd;
+
+  // Iterate over every demand and check the admission properties of
+  // the demand.  The element e is the packet trajectory for the
+  // packet which started at node j and that goes to node i.
+  FOREACH_MATRIX_ELEMENT(ppm, i, j, e, pp_matrix)
+    // Iterate over the hops of a packet_presence.
+    for(packet_presence::const_iterator t = e.begin(); t != e.end(); ++t)
+      {
+	map<Vertex, dist_poly>::const_iterator tj = t->second.find(j);
+	// Make sure the packet arrives at the node j after that hop.
+	if (tj != t->second.end())
+	  {
+	    // This distribution polynomial describes
+	    const dist_poly &dp = tj->second;
+
+	    accumulator_set<double, stats<tag::weighted_mean>, double> acc_mean;
+	    BOOST_FOREACH(const dist_poly::value_type &v, dp)
+	      acc_mean(v.first, weight = v.second.mean());
+
+	    double m = mean(acc_mean);
+	    acc_dtd(m);
+	  }
+      }
+
+  if (args.show_others)
+    os << "Mean of the demand total time: ";
+  if (args.dtd_mean)
+    os << mean(acc_dtd) << std::endl;
+
+  if (args.show_others)
+    os << "With the standard deviation of: ";
+  if (args.dtd_sdev)
+    os << sqrt(accumulators::variance(acc_dtd)) << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
   show_args args = process_show_args(argc, argv);
@@ -262,6 +302,7 @@ int main(int argc, char* argv[])
   check_plp(ppm, ptm, tm, g, cout, args);
   check_thr(ptm, g, cout, args);
   check_dad(ppm, g, cout, args);
+  check_dtd(ppm, g, cout, args);
 
   return 0;
 }
