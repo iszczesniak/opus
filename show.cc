@@ -199,7 +199,7 @@ check_dad(const pp_matrix &ppm, const Graph &g, ostream &os,
     }
 
   if (args.show_others)
-    os << "Mean of the demand admission time: ";
+    os << "Mean of the demand admission delay: ";
   if (args.dad_mean)
     os << mean(acc_dad) << std::endl;
 

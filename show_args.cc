@@ -36,9 +36,9 @@ process_show_args(int argc, char *argv[])
 
         ("dth-sdev", "show the demand throughput standard deviation")
 
-        ("dad-mean", "show the mean of the demand admission time")
+        ("dad-mean", "show the mean of the demand admission delay")
 
-        ("dad-sdev", "show the standard deviation of the demand admission time")
+        ("dad-sdev", "show the standard deviation of the demand admission delay")
 
         ("dtd-mean", "show the mean of the demand total delay")
 
