@@ -55,6 +55,12 @@ struct show_args
 
   /// Show the standard deviation of the demand total delay.
   bool dtd_sdev;
+
+  /// Show the mean of the demand interconnection delay.
+  bool did_mean;
+
+  /// Show the standard deviation of the demand interconnection delay.
+  bool did_sdev;
 };
 
 /**

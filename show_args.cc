@@ -44,6 +44,10 @@ process_show_args(int argc, char *argv[])
 
         ("dtd-sdev", "show the standard deviation of the demand total delay")
 
+        ("did-mean", "show the mean of the demand interconnection delay")
+
+        ("did-sdev", "show the standard deviation of the demand interconnection delay")
+
         ("file-name", po::value<string>(), "input file");
 
       po::positional_options_description p;
@@ -88,6 +92,10 @@ process_show_args(int argc, char *argv[])
       any |= result.dtd_mean = vm.count("dtd-mean");
       any |= result.dtd_sdev = vm.count("dtd-sdev");
 
+      // Demand interconnection delay
+      any |= result.did_mean = vm.count("did-mean");
+      any |= result.did_sdev = vm.count("did-sdev");
+
       // Don't show others is any above was selected.
       result.show_others = !any;
 
@@ -107,6 +115,8 @@ process_show_args(int argc, char *argv[])
 	  result.dad_sdev = true;
 	  result.dtd_mean = true;
 	  result.dtd_sdev = true;
+	  result.did_mean = true;
+	  result.did_sdev = true;
          }
 
       if (vm.count("file-name"))
