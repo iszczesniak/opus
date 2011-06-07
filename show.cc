@@ -119,7 +119,7 @@ check_plp(const pp_matrix &ppm, const pt_matrix &ptm, const fp_matrix &tm,
 }
 
 void
-check_thr(const pt_matrix &ptm, const Graph &g, ostream &os,
+check_thr(const pp_matrix &ppm, const Graph &g, ostream &os,
 	  const show_args &args)
 {
   double network_throughput = 0;
@@ -128,20 +128,20 @@ check_thr(const pt_matrix &ptm, const Graph &g, ostream &os,
 
   // Iterate over all demands.  The element e is the packet trajectory
   // for the packet which started at node j and that goes to node i.
-  FOREACH_MATRIX_ELEMENT(ptm, i, j, e, pt_matrix)
+  FOREACH_MATRIX_ELEMENT(ppm, i, j, e, pp_matrix)
     {
       double out_rate = 0;
 
-      // Iterate over the hops of a trajectory.
-      for(packet_trajectory::const_iterator t = e.begin();
+      // Iterate over the hops of a packet presence.
+      for(packet_presence::const_iterator t = e.begin();
           t != e.end(); ++t)
-        // Iterate over the links of the hop.  Iterator l points to a
-        // pair of <Edge, dist_poly>.
-        for(packet_trajectory::mapped_type::const_iterator
+        // Iterate over the nodes of the hop.  Iterator l points to a
+        // pair of <Vertex, dist_poly>.
+        for(packet_presence::mapped_type::const_iterator
               l = t->second.begin(); l != t->second.end(); ++l)
           {
-            // The node where the packet arrives along this link.
-            Vertex ld = target(l->first, g);
+            // The node where the packet arrives.
+            Vertex ld = l->first;
 
             if (ld == i)
 	      {
@@ -300,7 +300,7 @@ int main(int argc, char* argv[])
 
   check_ll(ll, g, cout, args);
   check_plp(ppm, ptm, tm, g, cout, args);
-  check_thr(ptm, g, cout, args);
+  check_thr(ppm, g, cout, args);
   check_dad(ppm, g, cout, args);
   check_dtd(ppm, g, cout, args);
 
