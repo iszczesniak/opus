@@ -75,41 +75,18 @@ check_ll(const map<Edge, double> &ll, const Graph &g, ostream &os,
 }
 
 void
-check_plp(const pp_matrix &ppm, const pt_matrix &ptm, const Graph &g,
+check_plp(const dp_matrix &at, const dp_matrix &dt, const Graph &g,
 	  ostream &os, const show_args &args)
 {
-  if (args.plp_mean)
+  if (args.plp_mean || args.plp_sdev)
     {
       accumulator_set<double, stats<tag::mean, tag::variance> > acc_plp;
 
-      // Iterate over all demands.  The element e is the packet
-      // trajectory for the packet which started at node j and that
-      // goes to node i.
-      FOREACH_MATRIX_ELEMENT(ptm, i, j, e, pt_matrix)
+      // For each demand that started at node j and goes to node i.
+      FOREACH_MATRIX_ELEMENT(dt, i, j, e, dp_matrix)
 	{
-	  // Make sure the demand is present in the ppm.
-	  assert(ppm.exists(i, j));
-	  double in_rate = ::sum(ppm.at(i, j)[0][j]).mean();
-	  double out_rate = 0;
-      
-	  // Iterate over the hops of a trajectory.
-	  for(packet_trajectory::const_iterator t = e.begin();
-	      t != e.end(); ++t)
-	    // Iterate over the links of the hop.  Iterator l points
-	    // to a pair of <Edge, dist_poly>.
-	    for(packet_trajectory::mapped_type::const_iterator
-		  l = t->second.begin(); l != t->second.end(); ++l)
-	      {
-		// The node where the packet arrives along this link.
-		Vertex ld = target(l->first, g);
-
-		if (ld == i)
-		  // The sum function is our function defined in the
-		  // global name space.  There is also the sum
-		  // function in the Boost.accumulators, but it's not
-		  // what we want.
-		  out_rate += ::sum(l->second).mean();
-	      }
+	  double in_rate = ::sum(at.at(i, j)).mean(); 
+	  double out_rate = ::sum(e).mean();
 
 	  double plp = (in_rate - out_rate) / in_rate;
 	  acc_plp(plp);
@@ -317,7 +294,16 @@ int main(int argc, char* argv[])
     }
 
   check_ll(ll, g, cout, args);
-  check_plp(ppm, ptm, g, cout, args);
+
+  // Admitted traffic.
+  dp_matrix at;
+  // Delivered traffic.
+  dp_matrix dt;
+
+  calculate_at(ppm, at);
+  calculate_dt(ppm, dt);
+
+  check_plp(at, dt, g, cout, args);
   check_thr(ppm, cout, args);
   check_dad(ppm, cout, args);
   check_dtd(ppm, cout, args);
