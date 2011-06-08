@@ -75,8 +75,8 @@ check_ll(const map<Edge, double> &ll, const Graph &g, ostream &os,
 }
 
 void
-check_plp(const pp_matrix &ppm, const pt_matrix &ptm, const fp_matrix &tm,
-	  const Graph &g, ostream &os, const show_args &args)
+check_plp(const pp_matrix &ppm, const pt_matrix &ptm, const Graph &g,
+	  ostream &os, const show_args &args)
 {
   if (args.plp_mean)
     {
@@ -128,8 +128,7 @@ check_plp(const pp_matrix &ppm, const pt_matrix &ptm, const fp_matrix &tm,
 }
 
 void
-check_thr(const pp_matrix &ppm, const Graph &g, ostream &os,
-	  const show_args &args)
+check_thr(const pp_matrix &ppm, ostream &os, const show_args &args)
 {
   if (args.nth || args.dth_mean || args.dth_sdev)
     {
@@ -188,8 +187,7 @@ check_thr(const pp_matrix &ppm, const Graph &g, ostream &os,
 }
 
 void
-check_dad(const pp_matrix &ppm, const Graph &g, ostream &os,
-	  const show_args &args)
+check_dad(const pp_matrix &ppm, ostream &os, const show_args &args)
 {
   if (args.dad_mean || args.dad_sdev)
     {
@@ -227,8 +225,7 @@ check_dad(const pp_matrix &ppm, const Graph &g, ostream &os,
 }
 
 void
-check_dtd(const pp_matrix &ppm, const Graph &g, ostream &os,
-	  const show_args &args)
+check_dtd(const pp_matrix &ppm, ostream &os, const show_args &args)
 {
   if (args.dtd_mean || args.dtd_sdev)
     {
@@ -320,10 +317,10 @@ int main(int argc, char* argv[])
     }
 
   check_ll(ll, g, cout, args);
-  check_plp(ppm, ptm, tm, g, cout, args);
-  check_thr(ppm, g, cout, args);
-  check_dad(ppm, g, cout, args);
-  check_dtd(ppm, g, cout, args);
+  check_plp(ppm, ptm, g, cout, args);
+  check_thr(ppm, cout, args);
+  check_dad(ppm, cout, args);
+  check_dtd(ppm, cout, args);
 
   return 0;
 }
