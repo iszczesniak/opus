@@ -64,4 +64,10 @@ typedef sparse_matrix<Vertex, double> fp_matrix;
  */
 typedef sparse_matrix<Vertex, fp_poly> trans_matrix;
 
+/**
+ * This is the matrix with dist_poly as elements.  It's used to store
+ * the data on admitted and delivered traffic.
+ */
+typedef sparse_matrix<Vertex, dist_poly> dp_matrix;
+
 #endif /* MATRIXES_HPP */

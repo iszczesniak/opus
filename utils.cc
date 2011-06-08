@@ -594,6 +594,44 @@ calculate_ll(const pt_matrix &ptm, map<Edge, double> &ll, const Graph &g)
     i->second /= get(edge_weight2, g, i->first);
 }
 
+void
+calculate_at(const pp_matrix &ppm, dp_matrix &at)
+{
+  // For every demand that starts at node j and goes to node i.
+  FOREACH_MATRIX_ELEMENT(ppm, i, j, e, pp_matrix)
+    {
+      // Find the element for hop number 0.
+      packet_presence::const_iterator e0 = e.find(0);
+      assert(e0 != e.end());
+      // Find the element for node j.
+      map<Vertex, dist_poly>::const_iterator e0j = e0->second.find(j);
+      assert(e0j != e0->second.end());
+      // This is the dist_poly for the admitted traffic.
+      const dist_poly &dp = e0j->second;
+      at[i][j] = dp;
+    }
+}
+
+void
+calculate_dt(const pp_matrix &ppm, dp_matrix &dt)
+{
+  // For every demand that starts at node j and goes to node i.
+  FOREACH_MATRIX_ELEMENT(ppm, i, j, e, pp_matrix)
+    // Iterate over the hops of a packet_presence.
+    for(packet_presence::const_iterator t = e.begin(); t != e.end(); ++t)
+      {
+	map<Vertex, dist_poly>::const_iterator ti = t->second.find(i);
+	// Make sure the packet arrives at the node i after that hop.
+	if (ti != t->second.end())
+	  {
+	    // This distribution polynomial describes the packets that
+	    // arrive at node i.
+	    const dist_poly &dp = ti->second;
+	    dt[i][j] += dp;
+	  }
+      }
+}
+
 dist_poly
 node_dist_poly(Vertex j, Vertex i, const pp_matrix &ppm, bool admitted)
 {

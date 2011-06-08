@@ -259,6 +259,20 @@ void
 calculate_ll(const pt_matrix &ptm, map<Edge, double> &ll, const Graph &g);
 
 /**
+ * Calculate the admitted traffic.  Element at[i][j] tells the rate of
+ * packets admitted at node j that go to node i.
+ */
+void
+calculate_at(const pp_matrix &ppm, dp_matrix &at);
+
+/**
+ * Calculate the delivered traffic.  Element dt[i][j] tells the rate
+ * of packets delivered to node j that were admitted at node i.
+ */
+void
+calculate_dt(const pp_matrix &ppm, dp_matrix &dt);
+
+/**
  * Returns a dist_poly for packets that arrive at node j and that are
  * destined to node i.  If the flag admitted is true, we also consider
  * the just-admitted packets.
