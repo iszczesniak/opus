@@ -78,7 +78,7 @@ void
 check_plp(const pp_matrix &ppm, const pt_matrix &ptm, const Graph &g,
 	  ostream &os, const show_args &args)
 {
-  if (args.plp_mean)
+  if (args.plp_mean || args.plp_sdev)
     {
       accumulator_set<double, stats<tag::mean, tag::variance> > acc_plp;
 
