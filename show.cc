@@ -105,7 +105,7 @@ check_plp(const dp_matrix &at, const dp_matrix &dt, const Graph &g,
 }
 
 void
-check_thr(const pp_matrix &ppm, ostream &os, const show_args &args)
+check_thr(const dp_matrix &dt, ostream &os, const show_args &args)
 {
   if (args.nth || args.dth_mean || args.dth_sdev)
     {
@@ -113,37 +113,12 @@ check_thr(const pp_matrix &ppm, ostream &os, const show_args &args)
 
       accumulator_set<double, stats<tag::mean, tag::variance> > acc_thr;
 
-      // Iterate over all demands.  The element e is the packet
-      // trajectory for the packet which started at node j and that
-      // goes to node i.
-      FOREACH_MATRIX_ELEMENT(ppm, i, j, e, pp_matrix)
+      // For each demand that started at node j and goes to node i.
+      FOREACH_MATRIX_ELEMENT(dt, i, j, e, dp_matrix)
 	{
-	  double out_rate = 0;
-
-	  // Iterate over the hops of a packet presence.
-	  for(packet_presence::const_iterator t = e.begin();
-	      t != e.end(); ++t)
-	    // Iterate over the nodes of the hop.  Iterator l points
-	    // to a pair of <Vertex, dist_poly>.
-	    for(packet_presence::mapped_type::const_iterator
-		  l = t->second.begin(); l != t->second.end(); ++l)
-	      {
-		// The node where the packet arrives.
-		Vertex ld = l->first;
-
-		if (ld == i)
-		  {
-		    // The sum function is our function defined in the
-		    // global name space.  There is also the sum
-		    // function in the Boost.accumulators, but it's
-		    // not what we want.
-		    double rate = ::sum(l->second).mean();
-		    network_throughput += rate;
-		    out_rate += rate;
-		  }
-	      }
-
+	  double out_rate = ::sum(e).mean();
 	  acc_thr(out_rate);
+	  network_throughput += out_rate;
 	}
 
       if (args.show_others)
@@ -304,7 +279,7 @@ int main(int argc, char* argv[])
   calculate_dt(ppm, dt);
 
   check_plp(at, dt, g, cout, args);
-  check_thr(ppm, cout, args);
+  check_thr(dt, cout, args);
   check_dad(ppm, cout, args);
   check_dtd(ppm, cout, args);
 
