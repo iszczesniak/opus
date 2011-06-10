@@ -169,35 +169,22 @@ check_dad(const dp_matrix &da, ostream &os, const show_args &args)
 }
 
 void
-check_dtd(const pp_matrix &ppm, ostream &os, const show_args &args)
+check_dtd(const dp_matrix &dt, ostream &os, const show_args &args)
 {
   if (args.dtd_mean || args.dtd_sdev)
     {
       accumulator_set<double, stats<tag::mean, tag::variance> > acc_dtd;
 
-      // Iterate over every demand and check the admission properties
-      // of the demand.  The element e is the packet trajectory for
-      // the packet which started at node j and that goes to node i.
-      FOREACH_MATRIX_ELEMENT(ppm, i, j, e, pp_matrix)
-	// Iterate over the hops of a packet_presence.
-	for(packet_presence::const_iterator t = e.begin(); t != e.end(); ++t)
-	  {
-	    map<Vertex, dist_poly>::const_iterator tj = t->second.find(j);
-	    // Make sure the packet arrives at the node j after that
-	    // hop.
-	    if (tj != t->second.end())
-	      {
-		// This distribution polynomial describes
-		const dist_poly &dp = tj->second;
+      // For each demand that started at node j and goes to node i.
+      FOREACH_MATRIX_ELEMENT(dt, i, j, e, dp_matrix)
+	{
+	  accumulator_set<double, stats<tag::weighted_mean>, double> acc_mean;
+	  BOOST_FOREACH(const dist_poly::value_type &v, e)
+	    acc_mean(v.first, weight = v.second.mean());
 
-		accumulator_set<double, stats<tag::weighted_mean>, double> acc_mean;
-		BOOST_FOREACH(const dist_poly::value_type &v, dp)
-		  acc_mean(v.first, weight = v.second.mean());
-
-		double m = mean(acc_mean);
-		acc_dtd(m);
-	      }
-	  }
+	  double m = mean(acc_mean);
+	  acc_dtd(m);
+	}
 
       if (args.show_others)
 	os << "Mean of the demand total time: ";
@@ -273,7 +260,7 @@ int main(int argc, char* argv[])
   check_plp(at, dt, g, cout, args);
   check_thr(dt, cout, args);
   check_dad(at, cout, args);
-  check_dtd(ppm, cout, args);
+  check_dtd(dt, cout, args);
 
   return 0;
 }
