@@ -83,10 +83,16 @@ check_plp(const dp_matrix &at, const dp_matrix &dt, const Graph &g,
       accumulator_set<double, stats<tag::mean, tag::variance> > acc_plp;
 
       // For each demand that started at node j and goes to node i.
-      FOREACH_MATRIX_ELEMENT(dt, i, j, e, dp_matrix)
+      FOREACH_MATRIX_ELEMENT(dt, i, j, dt_e, dp_matrix)
 	{
-	  double in_rate = ::sum(at.at(i, j)).mean(); 
-	  double out_rate = ::sum(e).mean();
+	  const dist_poly &at_e = at.at(i, j);
+	  double in_rate = 0, out_rate = 0;
+
+	  BOOST_FOREACH(const dist_poly::value_type &v, at_e)
+	    in_rate += v.second.mean();
+
+	  BOOST_FOREACH(const dist_poly::value_type &v, dt_e)
+	    out_rate += v.second.mean();
 
 	  double plp = (in_rate - out_rate) / in_rate;
 	  acc_plp(plp);
