@@ -198,6 +198,52 @@ check_dtd(const dp_matrix &dt, ostream &os, const show_args &args)
     }
 }
 
+void
+check_did(const dp_matrix &at, const dp_matrix &dt, ostream &os,
+	  const show_args &args)
+{
+  if (args.did_mean || args.did_sdev)
+    {
+      accumulator_set<double, stats<tag::mean, tag::variance> > acc_did;
+
+      // For each demand that started at node j and goes to node i.
+      FOREACH_MATRIX_ELEMENT(dt, i, j, e, dp_matrix)
+	{
+	  double am, dm;
+
+	  // Calculate the mean admission time.
+	  {
+	    const dist_poly &dp = at.at(i, j);
+	    accumulator_set<double, stats<tag::weighted_mean>, double> acc_mean;
+	    BOOST_FOREACH(const dist_poly::value_type &v, dp)
+	      acc_mean(v.first, weight = v.second.mean());
+	    am = mean(acc_mean);
+	  }
+
+	  // Calculate the mean delivery time.
+	  {
+	    accumulator_set<double, stats<tag::weighted_mean>, double> acc_mean;
+	    BOOST_FOREACH(const dist_poly::value_type &v, e)
+	      acc_mean(v.first, weight = v.second.mean());
+	    dm = mean(acc_mean);
+	  }
+
+	  // The difference is the mean interconnection time.
+	  acc_did(dm - am);
+	}
+
+      if (args.show_others)
+	os << "Mean of the demand interconnection time: ";
+      if (args.did_mean)
+	os << mean(acc_did) << std::endl;
+
+      if (args.show_others)
+	os << "With the standard deviation of: ";
+      if (args.did_sdev)
+	os << sqrt(accumulators::variance(acc_did)) << std::endl;
+    }
+}
+
 int main(int argc, char* argv[])
 {
   show_args args = process_show_args(argc, argv);
@@ -261,6 +307,7 @@ int main(int argc, char* argv[])
   check_thr(dt, cout, args);
   check_dad(at, cout, args);
   check_dtd(dt, cout, args);
+  check_did(at, dt, cout, args);
 
   return 0;
 }
