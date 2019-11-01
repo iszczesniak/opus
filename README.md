@@ -22,11 +22,11 @@ and Networking, vol. 3, iss. 10, pp. 806-815, October 2011
 
 You can download the code at:
 
-http://github.com/iszczesniak/opus
+<http://github.com/iszczesniak/opus>
 
 Or you can use git:
 
-git clone git://github.com/iszczesniak/opus.git
+`git clone git://github.com/iszczesniak/opus.git`
 
 ## Author, License and Copyright
 
