@@ -30,6 +30,7 @@ Or you can use git:
 
 ## Author, License and Copyright
 
-OPUS was written by [Ireneusz (Irek) Szcześniak](www.irkos.org).  It's
-licensed under GPL and copyrighted by [IITiS PAN](www.iitis.pl), and
-[Politechnika Częstochowska](pcz.pl).
+OPUS was written by [Ireneusz (Irek)
+Szcześniak](http://www.irkos.org).  It's licensed under GPL and
+copyrighted by [IITiS PAN](http://www.iitis.pl), and [Politechnika
+Częstochowska](http://www.pcz.pl).
